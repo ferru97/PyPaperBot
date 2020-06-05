@@ -18,6 +18,7 @@ from crossref_commons.iteration import iterate_publications_as_json
 from difflib import SequenceMatcher
 
 
+
 gErrors = ["This page appears when Google automatically detects requests coming from your computer network which appear to be in violation of the","Attiva JavaScript"]
 avoid_texts = ["[PDF]","[HTML]","ACNP Full Text","Full View",""]
 a_title_tag = "data-clk-atid"
@@ -81,48 +82,60 @@ def main(query, number):
         html = html.text
         parser.feed(html)
         
-        getDois(parser.getTitlesFound())
+        papers = getPapersInfo(parser.getTitlesFound())
+        for p in papers:
+            print(p["DOI"])
+        
         parser.resetTitles()
         print("Next -> ",i+1)
     
-    titles = parser.getTitlesFound()
-    getDois(titles)
         
     
 def similarStrings(a, b):
     return SequenceMatcher(None, a, b).ratio()
 
 
-def getDois(titles):
+def getPapersInfo(titles):
+    papers_return = []
     for title in titles:
         title = title.strip().lower()
         queries = {'query.bibliographic': title,'sort':'relevance'}
 
         found = False;
         cache = []
+        paper_found = {"name_original":title,"name_found":"","timestamp":"0","DOI":""};
         for el in iterate_publications_as_json(max_results=10, queries=queries):
             not_empty = True
             try:
               el_title = el["title"][0].strip().lower()
               el_doi = el["DOI"].strip().lower()
+              el_timestamp = int(el["created"]["timestamp"])
               cache.append("-"+el_title)
             except:
               not_empty = False
             
             if not_empty==True and similarStrings(title ,el_title)>0.75:
-                print(el_title+" -> "+el_doi)
                 found = True;
+                if el_timestamp > int(paper_found["timestamp"]):
+                    paper_found["name"] = el_title
+                    paper_found["timestamp"] = str(el_timestamp)
+                    paper_found["DOI"] = el_doi
                 break
+            
+        papers_return.append(paper_found)
             
         if found == False:
             print("NOT FOUND -> "+title)
             for c in cache:
                 print(c)
-        time.sleep(random.randint(5,15))
+                
+        time.sleep(random.randint(5,10))
+        
+    return papers_return
         
 
     
 if __name__ == "__main__":
     query = "textual analysis accounting"
-    paper_num = 10
+    paper_num = 20
     main(query,paper_num)
