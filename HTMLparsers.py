@@ -22,6 +22,7 @@ def schoolarParser(html):
     return result            
         
 
+
 def isBook(tag):
     result = False
     for span in tag.findAll("span", class_="gs_ct2"):
@@ -43,7 +44,8 @@ def getSchiHubPDF(html):
         
     if plugin!=None and result==None:
         result = plugin.get("src")
+        
+    if result!=None and result[0]!="h":
+        result = "https:"+result
     
     return result
-    
-    
