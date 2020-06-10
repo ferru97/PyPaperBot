@@ -95,7 +95,6 @@ def SciHubDownload(papers, dwnl_dir):
                             
                             
                     if p.downloaded==False and pdf_used==False and p.sc_link[-3:]=="pdf":
-                        print(p.sc_link)
                         pdf_used = True
                         
                         r = requests.get(p.sc_link, headers=HEADERS)
