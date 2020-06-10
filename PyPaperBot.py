@@ -48,8 +48,9 @@ def main(query, number, dwn_dir):
         html = html.text
         
         papers = HTMLparsers.schoolarParser(html)
-        print("Papers found from Scholar: "+str(len(papers)))
+        print("Papers found from Scholar at page "+str(i+1)+" : "+str(len(papers)))
         
+        print("Searching on Crossref...")
         papersInfo = getPapersInfo(papers)
         info_valids = 0
         for x in papersInfo:
@@ -60,10 +61,10 @@ def main(query, number, dwn_dir):
         papers_result.append(papersInfo)
         SciHubDownload(papersInfo, dwn_dir)
         
-        print("Next -> ",i+1)
+        print("Next page-> ",i+1)
         
     Paper.generateReport(papers_result,dwn_dir+"result.csv")
-    Paper.generateBibtex(papers_result,dwn_dir+"bibtex.txt")
+    Paper.generateBibtex(papers_result,dwn_dir+"bibtex.bib")
         
         
 def SciHubDownload(papers, dwnl_dir):
@@ -73,7 +74,7 @@ def SciHubDownload(papers, dwnl_dir):
     for p in papers:      
         if p.canBeDownloaded():        
             pdf_dir = dwnl_dir + p.getFileName()
-            print("Downloading -> "+str(p.getFileName()))
+            print("Downloading -> "+str(p.sc_title))
             
                         
             use_sc_link = False
@@ -163,3 +164,7 @@ if __name__ == "__main__":
     paper_num = 10
     dwn_dir = "E:/Users/Vito/Desktop/testPaperbot/"
     main(query, paper_num, dwn_dir)
+    
+    
+    
+    

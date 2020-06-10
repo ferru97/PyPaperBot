@@ -4,6 +4,8 @@ Created on Mon Jun  8 21:43:30 2020
 
 @author: Vito
 """
+import string
+
 
 
 class Paper:
@@ -25,8 +27,8 @@ class Paper:
     
     def setAuthors(self,authors):
         for a in authors:
-            name = a["given"] if "given" in a else  "None"
-            surname = a["family"] if "family" in a else  "None"
+            name = string.capwords(a["given"]) if "given" in a else  "None"
+            surname = string.capwords(a["family"]) if "family" in a else  "None"
             self.crs_authors.append((name,surname))
             
     def getFileName(self):
@@ -42,9 +44,22 @@ class Paper:
         return fname + ".pdf"
     
     def setBibtex(self,bibtex):
-        if bibtex!=None and len(bibtex)>7 and bibtex[:8]=="@article" :
-            self.crs_bibtex = bibtex
+        if bibtex!=None and len(bibtex)>7 and bibtex[:8]=="@article" :      
+            x_0 = bibtex.find("author = {")
+            x_1 = bibtex.find("},", x_0)
+            
+            y = string.capwords(bibtex[(x_0 + 10):x_1])
+            
+            and_0 = y.find(" And ")
+            
+            if and_0 != -1:
+                z = y[:(and_0 + 1)] + "a" + y[and_0 + 2:]
+            else:
+                z = y
+            
+            self.crs_bibtex = bibtex[:(x_0 + 10)] + z + bibtex[(x_1):] 
             self.bibtex_found = True
+            
             
     def canBeDownloaded(self):
         if self.crs_DOI!=None or self.sc_link!=None:
@@ -63,11 +78,12 @@ class Paper:
         self.bibtex_found = False
     
     def generateReport(papers, path):
-        content = "SC Name,CRS Name,Downloaded,SC Link,CRS DOI,Bibtex"
+        content = "SC Name;CRS Name;Downloaded;SC Link;CRS DOI;Bibtex;PDF Name"
         for list_p in papers:
             for p in list_p:  
-                content += ("\n"+str(p.sc_title)+","+str(p.crs_title)+","+str(p.downloaded)+
-                ","+str(p.sc_link)+","+str(p.crs_DOI)+","+str(p.bibtex_found))
+                pdf_name = p.getFileName() if p.downloaded==True else ""
+                content += ("\n"+str(p.sc_title)+";"+str(p.crs_title)+";"+str(p.downloaded)+
+                ";"+str(p.sc_link)+";"+str(p.crs_DOI)+";"+str(p.bibtex_found))+";"+pdf_name
            
         f = open(path, "w")
         f.write(content)
