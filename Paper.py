@@ -5,6 +5,7 @@ Created on Mon Jun  8 21:43:30 2020
 @author: Vito
 """
 import string
+import re
 
 
 
@@ -40,7 +41,10 @@ class Paper:
             char = self.crs_bibtex.find("year = ")
             year = self.crs_bibtex[char+7:char+11]
             fname += year
-        
+            
+        if fname=="":
+            fname = "".join([c for c in self.sc_title if c.isalpha() or c.isdigit() or c==' ']).rstrip()
+    
         return fname + ".pdf"
     
     def setBibtex(self,bibtex):
@@ -85,7 +89,7 @@ class Paper:
                 content += ("\n"+str(p.sc_title)+";"+str(p.crs_title)+";"+str(p.downloaded)+
                 ";"+str(p.sc_link)+";"+str(p.crs_DOI)+";"+str(p.bibtex_found))+";"+pdf_name
            
-        f = open(path, "w")
+        f = open(path, "w", encoding='utf-8-sig')
         f.write(content)
         f.close()
         
@@ -94,13 +98,13 @@ class Paper:
         content = ""
         for list_p in papers:
             for p in list_p:  
-                if p.crossref_found:
+                if p.crs_bibtex!=None:
                     note =  ",\n\tnote = {\doi{" + str(p.crs_DOI) + "}}\n}\n\n"
                     bibtex = p.crs_bibtex[:(len(p.crs_bibtex)-2)] + note
                     content += bibtex
            
-        f = open(path, "w")
+        f = open(path, "w", encoding='utf-8-sig')
         f.write(content)
         f.close()
-        
+
             

@@ -17,21 +17,8 @@ from crossref_commons.iteration import iterate_publications_as_json
 from difflib import SequenceMatcher
 from scidownl.scihub import *
 import HTMLparsers
-import re
 from Paper import Paper
 
-
-def slugify(value):
-    """
-    Normalizes string, converts to lowercase, removes non-alpha characters,
-    and converts spaces to hyphens.
-    """
-    import unicodedata
-    value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore')
-    value = str(re.sub('[^\w\s-]', '', value).strip().lower())
-    value = str(re.sub('[-\s]+', '-', value))
-    # ...
-    return value
         
 
 def main(query, number, dwn_dir):
@@ -79,27 +66,38 @@ def SciHubDownload(papers, dwnl_dir):
                         
             use_sc_link = False
             doi_used = False
+            pdf_used = False
             errors = 0
             while p.downloaded==False and use_sc_link==False and errors!=2:        
                 try:   
-                    if doi_used==False and use_sc_link==False and p.crs_DOI!=None:
-                        url = SciHub_URL + p.crs_DOI
-                        doi_used = True
-                    else:
-                        url = SciHub_URL + p.sc_link
-                        use_sc_link = True
                     
-                    
-                    r = requests.get(url, headers=HEADERS)
-                    pdf_link = HTMLparsers.getSchiHubPDF(r.text)
-                    
-                    time.sleep(random.randint(1,5))
-                    
-                    if(pdf_link != None):
-                        r2 = requests.get(pdf_link, headers=HEADERS)
+                    if pdf_used==False and p.sc_link[-3:]=="pdf":
+                        pdf_used = True
+                        
+                        r = requests.get(p.sc_link, headers=HEADERS)
                         with open(pdf_dir, 'wb') as f:
-                            f.write(r2.content)
-                            p.downloaded = True
+                                f.write(r.content)
+                                p.downloaded = True
+                        
+                    else:
+                        if doi_used==False and p.crs_DOI!=None:
+                            url = SciHub_URL + p.crs_DOI
+                        else:
+                            url = SciHub_URL + p.sc_link
+                            use_sc_link = True
+                            
+                        doi_used = True
+                    
+                        r = requests.get(url, headers=HEADERS)
+                        pdf_link = HTMLparsers.getSchiHubPDF(r.text)
+                        
+                        time.sleep(random.randint(1,5))
+                        
+                        if(pdf_link != None):
+                            r2 = requests.get(pdf_link, headers=HEADERS)
+                            with open(pdf_dir, 'wb') as f:
+                                f.write(r2.content)
+                                p.downloaded = True
                 except:
                     errors +=1
                     
@@ -160,8 +158,8 @@ def getPapersInfo(papers):
 
     
 if __name__ == "__main__":
-    query = "text analysis for accounting"
-    paper_num = 10
+    query = "OPEC agreements in 2019 and 2020"
+    paper_num = 20
     dwn_dir = "E:/Users/Vito/Desktop/testPaperbot/"
     main(query, paper_num, dwn_dir)
     
