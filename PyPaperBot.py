@@ -71,23 +71,15 @@ def SciHubDownload(papers, dwnl_dir):
             while p.downloaded==False and use_sc_link==False and errors!=2:        
                 try:   
                     
-                    if doi_used and pdf_used==False and p.sc_link[-3:]=="pdf":
-                        pdf_used = True
-                        
-                        r = requests.get(p.sc_link, headers=HEADERS)
-                        with open(pdf_dir, 'wb') as f:
-                                f.write(r.content)
-                                p.downloaded = True
-                        
+                    if doi_used==False and p.crs_DOI!=None:
+                        url = SciHub_URL + p.crs_DOI
                     else:
-                        if doi_used==False and p.crs_DOI!=None:
-                            url = SciHub_URL + p.crs_DOI
-                        else:
-                            url = SciHub_URL + p.sc_link
-                            use_sc_link = True
-                            
-                        doi_used = True
-                    
+                        url = SciHub_URL + p.sc_link
+                        use_sc_link = True
+                        
+                    doi_used = True
+                
+                    try:   
                         r = requests.get(url, headers=HEADERS)
                         pdf_link = HTMLparsers.getSchiHubPDF(r.text)
                         
@@ -97,7 +89,19 @@ def SciHubDownload(papers, dwnl_dir):
                             r2 = requests.get(pdf_link, headers=HEADERS)
                             with open(pdf_dir, 'wb') as f:
                                 f.write(r2.content)
-                                p.downloaded = True
+                            p.downloaded = True
+                    except:
+                        pass
+                            
+                            
+                    if p.downloaded==False and pdf_used==False and p.sc_link[-3:]=="pdf":
+                        print(p.sc_link)
+                        pdf_used = True
+                        
+                        r = requests.get(p.sc_link, headers=HEADERS)
+                        with open(pdf_dir, 'wb') as f:
+                                f.write(r.content)
+                                p.downloaded = True        
                 except:
                     errors +=1
                     
@@ -158,7 +162,7 @@ def getPapersInfo(papers):
 
     
 if __name__ == "__main__":
-    query = "Shaletight oil production in us and canada"
+    query = "OPEC agreements in 2019 and 2020"
     paper_num = 20
     dwn_dir = "E:/Users/Vito/Desktop/testPaperbot/"
     main(query, paper_num, dwn_dir)
