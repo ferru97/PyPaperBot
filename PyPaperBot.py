@@ -71,7 +71,7 @@ def SciHubDownload(papers, dwnl_dir):
             while p.downloaded==False and use_sc_link==False and errors!=2:        
                 try:   
                     
-                    if pdf_used==False and p.sc_link[-3:]=="pdf":
+                    if doi_used and pdf_used==False and p.sc_link[-3:]=="pdf":
                         pdf_used = True
                         
                         r = requests.get(p.sc_link, headers=HEADERS)
@@ -158,7 +158,7 @@ def getPapersInfo(papers):
 
     
 if __name__ == "__main__":
-    query = "OPEC agreements in 2019 and 2020"
+    query = "Shaletight oil production in us and canada"
     paper_num = 20
     dwn_dir = "E:/Users/Vito/Desktop/testPaperbot/"
     main(query, paper_num, dwn_dir)
