@@ -11,14 +11,16 @@ import re
 
 class Paper:
     
-    def __init__(self,title, sc_link):
+    def __init__(self,title, sc_link, sc_page):
         self.sc_title = title
         self.sc_link = sc_link
+        self.sc_page = sc_page
         
         self.crs_title = None
         self.crs_DOI = None
         self.crs_authors = []
         self.crs_bibtex = None
+        self.crs_year = None
         
         self.downloaded = False
         self.crossref_found = False
@@ -38,9 +40,7 @@ class Paper:
             fname += author[1]+" "
             
         if self.crs_bibtex!=None:
-            char = self.crs_bibtex.find("year = ")
-            year = self.crs_bibtex[char+7:char+11]
-            fname += year
+            fname += str(self.crs_year)
             
         if fname=="":
             fname = "".join([c for c in self.sc_title if c.isalpha() or c.isdigit() or c==' ']).rstrip()
@@ -48,7 +48,7 @@ class Paper:
         return fname + ".pdf"
     
     def setBibtex(self,bibtex):
-        if bibtex!=None and len(bibtex)>7 and bibtex[:8]=="@article" :      
+        if bibtex!=None and len(bibtex)>7 and bibtex[0]=="@" :      
             x_0 = bibtex.find("author = {")
             x_1 = bibtex.find("},", x_0)
             
@@ -61,7 +61,12 @@ class Paper:
             else:
                 z = y
             
+
             self.crs_bibtex = bibtex[:(x_0 + 10)] + z + bibtex[(x_1):] 
+            
+            char = self.crs_bibtex.find("year = ")
+            self.crs_year  = int(self.crs_bibtex[char+7:char+11])    
+            
             self.bibtex_found = True
             
             
@@ -76,18 +81,18 @@ class Paper:
         self.crs_DOI = None
         self.crs_authors = []
         self.crs_bibtex = None
+        self.crs_year = None
         
         self.downloaded = False
         self.crossref_found = False
         self.bibtex_found = False
     
     def generateReport(papers, path):
-        content = "SC Name;CRS Name;Downloaded;SC Link;CRS DOI;Bibtex;PDF Name"
-        for list_p in papers:
-            for p in list_p:  
-                pdf_name = p.getFileName() if p.downloaded==True else ""
-                content += ("\n"+str(p.sc_title)+";"+str(p.crs_title)+";"+str(p.downloaded)+
-                ";"+str(p.sc_link)+";"+str(p.crs_DOI)+";"+str(p.bibtex_found))+";"+pdf_name
+        content = "SC Name;CRS Name;Downloaded;SC Link;CRS DOI;Bibtex;PDF Name;Year;Scholar page"
+        for p in papers:
+            pdf_name = p.getFileName() if p.downloaded==True else ""
+            content += ("\n"+str(p.sc_title)+";"+str(p.crs_title)+";"+str(p.downloaded)+
+            ";"+str(p.sc_link)+";"+str(p.crs_DOI)+";"+str(p.bibtex_found))+";"+pdf_name+";"+str(p.crs_year)+";"+str(p.sc_page)
            
         f = open(path, "w", encoding='utf-8-sig')
         f.write(content)
@@ -96,12 +101,11 @@ class Paper:
         
     def generateBibtex(papers, path):
         content = ""
-        for list_p in papers:
-            for p in list_p:  
-                if p.crs_bibtex!=None:
-                    note =  ",\n\tnote = {\doi{" + str(p.crs_DOI) + "}}\n}\n\n"
-                    bibtex = p.crs_bibtex[:(len(p.crs_bibtex)-2)] + note
-                    content += bibtex
+        for p in papers:
+            if p.crs_bibtex!=None:
+                note =  ",\n\tnote = {\doi{" + str(p.crs_DOI) + "}}\n}\n\n"
+                bibtex = p.crs_bibtex[:(len(p.crs_bibtex)-2)] + note
+                content += bibtex
            
         f = open(path, "w", encoding='utf-8-sig')
         f.write(content)

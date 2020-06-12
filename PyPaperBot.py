@@ -21,14 +21,14 @@ from Paper import Paper
 
         
 
-def main(query, number, dwn_dir):
+def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None):
     
     HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'}
     url = "https://scholar.google.com/scholar?q="+query+"&as_vis=1&as_sdt=1,5";
     
-    papers_result = []    
+    to_download = []
 
-    for i in range(0,int(number/10)):
+    for i in range(0,scholar_pages):
         if i>0:
             url = url + "&start=" + str(10*i)
         html = requests.get(url, headers=HEADERS)
@@ -38,28 +38,53 @@ def main(query, number, dwn_dir):
         print("Papers found from Scholar at page "+str(i+1)+" : "+str(len(papers)))
         
         print("Searching on Crossref...")
-        papersInfo = getPapersInfo(papers)
+        papersInfo = getPapersInfo(papers, url)
         info_valids = 0
         for x in papersInfo:
             if x.crs_DOI!=None:
                 info_valids += 1
         print("Papers info from Crossref: "+str(info_valids))
+        
+        to_download.append(papersInfo)
      
-        papers_result.append(papersInfo)
-        SciHubDownload(papersInfo, dwn_dir)
+        print("Next page -> ",i+2)
+        print("\n")
+    
+    
+
+    to_download = [item for sublist in to_download for item in sublist] 
+    
+    if min_date!=None:
+        to_download = filter_min_date(to_download,min_date)
         
-        print("Next page-> ",i+1)
+    to_download.sort(key=lambda x: x.crs_year, reverse=True)
+    
+    SciHubDownload(to_download, dwn_dir, num_limit)
+          
+    Paper.generateReport(to_download,dwn_dir+"result.csv")
+    Paper.generateBibtex(to_download,dwn_dir+"bibtex.bib")
+    
+
+
+    
+def filter_min_date(list_papers,min_year):
+    new_list = []
+    
+    for paper in list_papers:
+        if paper.crs_year!=None and paper.crs_year>=min_year:
+             new_list.append(paper)
+            
+    return new_list
+
         
-    Paper.generateReport(papers_result,dwn_dir+"result.csv")
-    Paper.generateBibtex(papers_result,dwn_dir+"bibtex.bib")
-        
-        
-def SciHubDownload(papers, dwnl_dir):
+    
+def SciHubDownload(papers, dwnl_dir, num_limit):
     HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'}
     SciHub_URL = "https://sci-hub.tw/"
     
-    for p in papers:      
-        if p.canBeDownloaded():        
+    num_downloaded = 0
+    for p in papers: 
+        if p.canBeDownloaded() and (num_limit==None or num_downloaded<num_limit):        
             pdf_dir = dwnl_dir + p.getFileName()
             print("Downloading -> "+str(p.sc_title))
             
@@ -90,6 +115,7 @@ def SciHubDownload(papers, dwnl_dir):
                             with open(pdf_dir, 'wb') as f:
                                 f.write(r2.content)
                             p.downloaded = True
+                            num_downloaded += 1
                     except:
                         pass
                             
@@ -100,7 +126,8 @@ def SciHubDownload(papers, dwnl_dir):
                         r = requests.get(p.sc_link, headers=HEADERS)
                         with open(pdf_dir, 'wb') as f:
                                 f.write(r.content)
-                                p.downloaded = True        
+                                p.downloaded = True  
+                                num_downloaded += 1
                 except:
                     errors +=1
                     
@@ -118,7 +145,7 @@ def getTimestamp(paper):
     return timestamp
 
 
-def getPapersInfo(papers):
+def getPapersInfo(papers, scholar_search_link):
     papers_return = []
     for paper in papers:
         title = paper[0].lower()
@@ -126,7 +153,7 @@ def getPapersInfo(papers):
 
         found = False;
         found_timestamp = 0
-        paper_found = Paper(title,paper[1])
+        paper_found = Paper(title,paper[1],scholar_search_link)
         for el in iterate_publications_as_json(max_results=30, queries=queries):
            
             el_date = getTimestamp(el);
@@ -161,10 +188,12 @@ def getPapersInfo(papers):
 
     
 if __name__ == "__main__":
-    query = "OPEC agreements in 2019 and 2020"
-    paper_num = 20
+    query = "machine learning gut microbioma"
+    scholar_pages = 2 #each page has max 10 paper
     dwn_dir = "E:/Users/Vito/Desktop/testPaperbot/"
-    main(query, paper_num, dwn_dir)
+    
+    #params query keyword - max scholar pages - download dir - min year - max papers to download
+    main(query, scholar_pages, dwn_dir, 2017,3)
     
     
     
