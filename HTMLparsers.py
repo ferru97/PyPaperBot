@@ -12,12 +12,13 @@ def schoolarParser(html):
     result = []
     soup = BeautifulSoup(html, "html.parser")
     for element in soup.findAll("div", class_="gs_r gs_or gs_scl"):
+        info = element.find("div", class_="gs_a"); 
         if isBook(element) == False:           
             for h3 in element.findAll("h3", class_="gs_rt"):
                 found = False
                 for a in h3.findAll("a"): 
                     if found == False:
-                        result.append((a.text, a.get("href")))
+                        result.append((a.text, a.get("href"), info.text))
                         found = True
     return result            
         

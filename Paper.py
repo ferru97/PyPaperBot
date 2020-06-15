@@ -5,27 +5,62 @@ Created on Mon Jun  8 21:43:30 2020
 @author: Vito
 """
 import string
-import re
-
 
 
 class Paper:
     
-    def __init__(self,title, sc_link, sc_page):
+    def __init__(self,title, sc_link, sc_page, scholar_info):
         self.sc_title = title
         self.sc_link = sc_link
         self.sc_page = sc_page
+        self.sc_authors = None
+        self.sc_year = None
+        self.sc_jurnal = None
         
         self.crs_title = None
         self.crs_DOI = None
         self.crs_authors = []
         self.crs_bibtex = None
         self.crs_year = None
+        self.crs_jurnal = None
         
         self.downloaded = False
+        self.downloadedFrom = 0 #1-SciHub 2-scholar
         self.crossref_found = False
         self.bibtex_found = False
         
+        self.setScholarInfo(scholar_info)
+        
+        
+    def setScholarInfo(self, s):
+        m = s.find("-")     
+            
+        x = s[:m-1]
+        x = x.replace(",", "")
+        x = x.split()
+        x = " ".join( [w for w in x if len(w) > 1 and w[1].islower()])
+        if(x[-1:]=="…"):
+            x = x[:-1] + " et al"
+        self.sc_authors = x      
+        
+        n = s.rfind(" - ")
+        year = s[(n-4):n].strip()
+        self.sc_year = year
+        
+        
+        jurnal = s[(m+2): (n-6)]
+        
+        if(jurnal[-1:]=="…"):
+            jurnal = jurnal[:-1]
+        self.sc_jurnal = jurnal
+     
+
+    def getJurnal(self):
+        if self.crs_jurnal!=None:
+            return self.crs_jurnal
+        if self.sc_jurnal!=None:
+            return self.sc_jurnal
+        return None
         
     
     def setAuthors(self,authors):
@@ -34,18 +69,22 @@ class Paper:
             surname = string.capwords(a["family"]) if "family" in a else  "None"
             self.crs_authors.append((name,surname))
             
-    def getFileName(self):
-        fname = ""
-        for author in self.crs_authors:
-            fname += author[1]+" "
+    def getFileName(self, dwn_source):
+        if dwn_source > 0:
+            fname = ""
             
-        if self.crs_bibtex!=None:
-            fname += str(self.crs_year)
-            
-        if fname=="":
-            fname = "".join([c for c in self.sc_title if c.isalpha() or c.isdigit() or c==' ']).rstrip()
-    
-        return fname + ".pdf"
+            if dwn_source == 1:
+                for author in self.crs_authors:
+                    fname += author[1]+" "
+                    
+                if self.crs_bibtex!=None:
+                    fname += str(self.crs_year)
+                    
+            if dwn_source == 2 or fname=="":
+                    fname += str(self.sc_authors)+" "+str(self.sc_year)                 
+        
+            return fname + ".pdf"
+
     
     def setBibtex(self,bibtex):
         if bibtex!=None and len(bibtex)>7 and bibtex[0]=="@" :      
@@ -82,17 +121,29 @@ class Paper:
         self.crs_authors = []
         self.crs_bibtex = None
         self.crs_year = None
+        self.crs_jurnal = None
         
         self.downloaded = False
         self.crossref_found = False
         self.bibtex_found = False
     
     def generateReport(papers, path):
-        content = "SC Name;CRS Name;Downloaded;SC Link;CRS DOI;Bibtex;PDF Name;Year;Scholar page"
+    
+        content = "SC Name;CRS Name;SC Link;CRS DOI;Bibtex;PDF Name;Year;Scholar page;Jurnal;Downloaded;Downloaded from"
         for p in papers:
-            pdf_name = p.getFileName() if p.downloaded==True else ""
-            content += ("\n"+str(p.sc_title)+";"+str(p.crs_title)+";"+str(p.downloaded)+
-            ";"+str(p.sc_link)+";"+str(p.crs_DOI)+";"+str(p.bibtex_found))+";"+pdf_name+";"+str(p.crs_year)+";"+str(p.sc_page)
+            pdf_name = p.getFileName(p.downloadedFrom) if p.downloaded==True else ""
+            
+            jurnal = str(p.sc_jurnal)
+            dwn_from = ""
+            if p.downloadedFrom == 1:
+                jurnal = str(p.crs_jurnal)
+                dwn_from = "SciHub"
+            if p.downloadedFrom == 2:
+                dwn_from = "Scholar"
+                
+            content += ("\n"+str(p.sc_title)+";"+str(p.crs_title)+
+            ";"+str(p.sc_link)+";"+str(p.crs_DOI)+";"+str(p.bibtex_found)+";"+
+            pdf_name+";"+str(p.crs_year)+";"+str(p.sc_page)+";"+jurnal+";"+str(p.downloaded)+";"+dwn_from)
            
         f = open(path, "w", encoding='utf-8-sig')
         f.write(content)
