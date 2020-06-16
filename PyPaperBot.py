@@ -237,13 +237,6 @@ if __name__ == "__main__":
     if dwn_dir!=None and dwn_dir[len(dwn_dir)-1]!='/':
         dwn_dir = dwn_dir + "/"
     main(args.query, args.scholar_pages, dwn_dir, args.min_year , args.max_dwn, args.journal_filter)
-    
-    query = "textual analysis for accounting"
-    scholar_pages = 1 #each page has max 10 paper
-    dwn_dir = "E:/Users/Vito/Desktop/testPaperbot/"
-    jurnal_filter_path = "E:/Users/Vito/Desktop/testPaperbot/filter.csv"
-    
-    
-    
+
     
     
