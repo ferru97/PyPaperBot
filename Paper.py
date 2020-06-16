@@ -158,8 +158,8 @@ class Paper:
                 bibtex = p.crs_bibtex[:(len(p.crs_bibtex)-2)] + note
                 content += bibtex
            
-        f = open(path, "w", encoding='utf-8-sig')
-        f.write(content)
+        f = open(path, "w")
+        f.write(content.encode("iso-8859-1"))
         f.close()
 
             
