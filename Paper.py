@@ -91,21 +91,33 @@ class Paper:
             x_0 = bibtex.find("author = {")
             x_1 = bibtex.find("},", x_0)
             
-            y = string.capwords(bibtex[(x_0 + 10):x_1])
-            
-            and_0 = y.find(" And ")
-            
-            if and_0 != -1:
-                z = y[:(and_0 + 1)] + "a" + y[and_0 + 2:]
+            if(len(self.crs_authors)==0): 
+                y = string.capwords(bibtex[(x_0 + 10):x_1])
+                
+                and_0 = y.find(" And ")
+                
+                if and_0 != -1:
+                    z = y[:(and_0 + 1)] + "a" + y[and_0 + 2:]
+                else:
+                    z = y
+                
+    
+                self.crs_bibtex = bibtex[:(x_0 + 10)] + z + bibtex[(x_1):] 
+               
             else:
-                z = y
-            
-
-            self.crs_bibtex = bibtex[:(x_0 + 10)] + z + bibtex[(x_1):] 
-            
+                authors_str = ""
+                i = 0
+                for (name,surname) in self.crs_authors:
+                    authors_str += name +" "+ surname+" "
+                    if i<len(self.crs_authors)-1:
+                       authors_str += "and " 
+                    i += 1
+                    
+                self.crs_bibtex = bibtex[:(x_0 + 10)] + authors_str + bibtex[(x_1):]
+                
+             
             char = self.crs_bibtex.find("year = ")
             self.crs_year  = int(self.crs_bibtex[char+7:char+11])    
-            
             self.bibtex_found = True
             
             

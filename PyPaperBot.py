@@ -21,7 +21,7 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, filter_ju
     
     HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'}
     
-    if len(query>2) and (query[0:7]=="http://" or query[0:8]=="https://"):
+    if len(query)>2 and (query[0:7]=="http://" or query[0:8]=="https://"):
         url = query
     else:
         url = "https://scholar.google.com/scholar?q="+query+"&as_vis=1&as_sdt=1,5";
