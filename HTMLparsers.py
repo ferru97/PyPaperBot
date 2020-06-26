@@ -5,6 +5,7 @@ Created on Sun Jun  7 11:59:42 2020
 @author: Vito
 """
 from bs4 import BeautifulSoup
+
 gErrors = ["This page appears when Google automatically detects requests coming from your computer network which appear to be in violation of the","Attiva JavaScript"]
 
 
@@ -12,14 +13,25 @@ def schoolarParser(html):
     result = []
     soup = BeautifulSoup(html, "html.parser")
     for element in soup.findAll("div", class_="gs_r gs_or gs_scl"):
-        info = element.find("div", class_="gs_a"); 
-        if isBook(element) == False:           
+        if isBook(element) == False:       
+            title = None
+            link = None
+            link_pdf = None
+            cites = None
             for h3 in element.findAll("h3", class_="gs_rt"):
                 found = False
                 for a in h3.findAll("a"): 
                     if found == False:
-                        result.append((a.text, a.get("href"), info.text))
+                        title = a.text
+                        link = a.get("href")
                         found = True
+            for a in element.findAll("a"):
+                 if "Cited by" in a.text:
+                     cites = int(a.text[8:])
+                 if "[PDF]" in a.text:
+                     link_pdf = a.get("href")
+            if title!=None:         
+                result.append((title, link, cites, link_pdf))
     return result            
         
 
@@ -50,3 +62,6 @@ def getSchiHubPDF(html):
         result = "https:"+result
     
     return result
+
+        
+    
