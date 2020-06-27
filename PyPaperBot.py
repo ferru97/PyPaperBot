@@ -13,10 +13,11 @@ from Paper import Paper
 from os import path
 import pandas as pd
 import argparse
+import sys
 
 
 
-def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, filter_jurnal_file=None):
+def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit_type=None, filter_jurnal_file=None, restrict=None):
     
     HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'}
     
@@ -36,7 +37,7 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, filter_ju
         papers = HTMLparsers.schoolarParser(html)
         print("Google Scholar page "+str(i+1)+" : "+str(len(papers))+" papers found")
         
-        papersInfo = getPapersInfo(papers, url)
+        papersInfo = getPapersInfo(papers, url, restrict)
         info_valids = 0
         for x in papersInfo:
             if x.sc_DOI!=None:
@@ -48,17 +49,22 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, filter_ju
         print("\n")
     
     
-    
-    to_download = [item for sublist in to_download for item in sublist] 
-    
-    if filter_jurnal_file!=None:
-       to_download = filterJurnals(to_download,filter_jurnal_file)
-    
-    if min_date!=None:
-        to_download = filter_min_date(to_download,min_date)  
-     
+    if restrict==None or restrict!=0:
+        to_download = [item for sublist in to_download for item in sublist] 
         
-    to_download.sort(key=lambda x: int(x.sc_year) if x.sc_year!=None else 0, reverse=True)
+        if filter_jurnal_file!=None:
+           to_download = filterJurnals(to_download,filter_jurnal_file)
+        
+        
+        if min_date!=None:
+            to_download = filter_min_date(to_download,min_date)  
+         
+     
+        if num_limit_type!=None and num_limit_type==0:       
+            to_download.sort(key=lambda x: int(x.sc_year) if x.sc_year!=None else 0, reverse=True)
+            
+        if num_limit_type!=None and num_limit_type==1:       
+            to_download.sort(key=lambda x: int(x.sc_cites) if x.sc_cites!=None else 0, reverse=True)
     
     
     SciHubDownload(to_download, dwn_dir, num_limit)
@@ -180,7 +186,7 @@ def getTimestamp(paper):
     return timestamp
 
 
-def getPapersInfo(papers, scholar_search_link):
+def getPapersInfo(papers, scholar_search_link, restrict):
     papers_return = []
     num = 1
     for paper in papers:
@@ -206,14 +212,15 @@ def getPapersInfo(papers, scholar_search_link):
                     paper_found.setAuthors(el["author"])
                 if "short-container-title" in el:
                     paper_found.sc_jurnal = el["short-container-title"]
-                     
-                #get bibtex from scholary    
-                try: 
-                    url_bibtex = "http://api.crossref.org/works/" + paper_found.sc_DOI + "/transform/application/x-bibtex"
-                    x = requests.get(url_bibtex)
-                    paper_found.setBibtex(str(x.text))
-                except:
-                    pass
+                   
+                if restrict==None or restrict!=1:    
+                    #get bibtex from scholary    
+                    try: 
+                        url_bibtex = "http://api.crossref.org/works/" + paper_found.sc_DOI + "/transform/application/x-bibtex"
+                        x = requests.get(url_bibtex)
+                        paper_found.setBibtex(str(x.text))
+                    except:
+                        pass
  
                 found = True        
             
@@ -227,12 +234,15 @@ def getPapersInfo(papers, scholar_search_link):
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description='PyPaperBot is python tool to search and dwonload scientific papers from Scholar, Crossref and SciHub')
-    parser.add_argument('--query', type=str, help='Query to make on Google Scholar')
+    parser.add_argument('--query', type=str, help='Query to make on Google Scholar or Google Scholar page link')
     parser.add_argument('--scholar-pages', required=True, type=int, help='Number of Google Scholar pages to inspect. Each page has a maximum of 10 papers')
     parser.add_argument('--dwn-dir', default="/", type=str, help='Directory path in which to save the result (Default=current)')
-    parser.add_argument('--min-year', default=None, type=str, help='Minimal publication year of the paper to download')
-    parser.add_argument('--max-dwn', default=None, type=str, help='Maximum number of papers to download')
+    parser.add_argument('--min-year', default=None, type=int, help='Minimal publication year of the paper to download')
+    parser.add_argument('--max-dwn-year', default=None, type=int, help='Maximum number of papers to download sorted by year')
+    parser.add_argument('--max-dwn-cites', default=None, type=int, help='Maximum number of papers to download sorted by number of citations')
     parser.add_argument('--journal-filter', default=None, type=str ,help='CSV file path of the journal filter (More info on github)')
+    parser.add_argument('--restrict', default=None, type=int ,choices=[0,1], help='0:Download only Bibtex - 1:Down load only papers PDF')
+
 
     args = parser.parse_args()
     dwn_dir = args.dwn_dir
@@ -241,7 +251,21 @@ if __name__ == "__main__":
         
     print("Query: {} \n".format(args.query))    
 
-    main(args.query, args.scholar_pages, dwn_dir, args.min_year , args.max_dwn, args.journal_filter)
+    
+    if args.max_dwn_year != None and args.max_dwn_cites != None:
+        print("Error: Only one option between '-max-dwn-year' and '-max-dwn-cites' can be used ")
+        sys.exit()
+    
+    max_dwn = None
+    max_dwn_type = None
+    if args.max_dwn_year != None:
+        max_dwn = args.max_dwn_year
+        max_dwn_type = 0
+    if args.max_dwn_cites != None:
+        max_dwn = args.max_dwn_cites
+        max_dwn_type = 1
+
+    main(args.query, args.scholar_pages, dwn_dir, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict)
     
     
     
