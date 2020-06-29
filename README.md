@@ -25,7 +25,7 @@ PyPaperBot arguments:
 
 ### Note
 You can use only one of the arguments in the following groups
-- *\-\-query* and*\-\-file*
+- *\-\-query* and *\-\-file*
 - *\-\-max-dwn-year* and *and max-dwn-cites*
 
 The arguments *\-\-scholar-pages* and one between  *\-\-query *and* \-\-file* are mandatory
