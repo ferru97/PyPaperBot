@@ -17,36 +17,41 @@ import sys
 
 
 
-def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit_type=None, filter_jurnal_file=None, restrict=None):
+def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit_type=None, filter_jurnal_file=None, restrict=None, file=None):
     
     HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'}
     
-    if len(query)>2 and (query[0:7]=="http://" or query[0:8]=="https://"):
-        url = query
-    else:
-        url = "https://scholar.google.com/scholar?hl=en&q="+query+"&as_vis=1&as_sdt=1,5";
-    
     to_download = []
+    if file==None:
+        if len(query)>2 and (query[0:7]=="http://" or query[0:8]=="https://"):
+            url = query
+        else:
+            url = "https://scholar.google.com/scholar?hl=en&q="+query+"&as_vis=1&as_sdt=1,5";
+        
 
-    for i in range(0,scholar_pages):
-        if i>0:
-            url = url + "&start=" + str(10*i)
-        html = requests.get(url, headers=HEADERS)
-        html = html.text
-        
-        papers = HTMLparsers.schoolarParser(html)
-        print("Google Scholar page "+str(i+1)+" : "+str(len(papers))+" papers found")
-        
-        papersInfo = getPapersInfo(papers, url, restrict)
-        info_valids = 0
-        for x in papersInfo:
-            if x.sc_DOI!=None:
-                info_valids += 1
-        print("Papers info from Crossref: "+str(info_valids))
-        
-        to_download.append(papersInfo)
-     
-        print("\n")
+        for i in range(0,scholar_pages):
+            if i>0:
+                url = url + "&start=" + str(10*i)
+            html = requests.get(url, headers=HEADERS)
+            html = html.text
+            
+            papers = HTMLparsers.schoolarParser(html)
+            print("Google Scholar page "+str(i+1)+" : "+str(len(papers))+" papers found")
+            
+            papersInfo = getPapersInfo(papers, url, restrict)
+            info_valids = 0
+            for x in papersInfo:
+                if x.sc_DOI!=None:
+                    info_valids += 1
+            print("Papers info from Crossref: "+str(info_valids))
+            
+            to_download.append(papersInfo)
+         
+            print("\n")
+        else:
+            for title in file:
+                to_download.append(title,None,None,None)
+            
     
     
     if restrict==None or restrict!=0:
@@ -233,10 +238,11 @@ def getPapersInfo(papers, scholar_search_link, restrict):
     
 if __name__ == "__main__":
     
-    parser = argparse.ArgumentParser(description='PyPaperBot is python tool to search and dwonload scientific papers from Scholar, Crossref and SciHub')
-    parser.add_argument('--query', type=str, help='Query to make on Google Scholar or Google Scholar page link')
+    parser = argparse.ArgumentParser(description='PyPaperBot is python tool to search and dwonload scientific papers using Google Scholar, Crossref and SciHub')
+    parser.add_argument('--query', type=str, default=None, help='Query to make on Google Scholar or Google Scholar page link')
+    parser.add_argument('--file', type=str, default=None, help='File .txt containing the list of papers to download')
     parser.add_argument('--scholar-pages', required=True, type=int, help='Number of Google Scholar pages to inspect. Each page has a maximum of 10 papers')
-    parser.add_argument('--dwn-dir', default="/", type=str, help='Directory path in which to save the result (Default=current)')
+    parser.add_argument('--dwn-dir', type=str, help='Directory path in which to save the result')
     parser.add_argument('--min-year', default=None, type=int, help='Minimal publication year of the paper to download')
     parser.add_argument('--max-dwn-year', default=None, type=int, help='Maximum number of papers to download sorted by year')
     parser.add_argument('--max-dwn-cites', default=None, type=int, help='Maximum number of papers to download sorted by number of citations')
@@ -245,16 +251,32 @@ if __name__ == "__main__":
 
 
     args = parser.parse_args()
-    dwn_dir = args.dwn_dir
+    dwn_dir = args.dwn_dir.replace('\\', '/')
     if dwn_dir!=None and dwn_dir[len(dwn_dir)-1]!='/':
         dwn_dir = dwn_dir + "/"
+    
+    if args.query==None and args.file==None:
+        print("Error, provide at least one of the following arguments: --query or --file")
+        sys.exit()
         
-    print("Query: {} \n".format(args.query))    
-
+    if args.query!=None and args.file!=None:
+        print("Error: Only one option between '--query' and '--file' can be used")
+        sys.exit()
     
     if args.max_dwn_year != None and args.max_dwn_cites != None:
-        print("Error: Only one option between '-max-dwn-year' and '-max-dwn-cites' can be used ")
+        print("Error: Only one option between '--max-dwn-year' and '--max-dwn-cites' can be used ")
         sys.exit()
+         
+    titles = None    
+    if args.file!=None:
+        titles = [] 
+        f = args.file.replace('\\', '/')
+        with open(f) as file_in:
+            for line in file_in:
+                titles.append(line)
+        
+    if args.query!=None:
+        print("Query: {} \n".format(args.query))    
     
     max_dwn = None
     max_dwn_type = None
@@ -264,8 +286,9 @@ if __name__ == "__main__":
     if args.max_dwn_cites != None:
         max_dwn = args.max_dwn_cites
         max_dwn_type = 1
+        
 
-    main(args.query, args.scholar_pages, dwn_dir, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict)
+    main(args.query, args.scholar_pages, dwn_dir, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, titles)
     
     
     
