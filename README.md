@@ -34,11 +34,12 @@ The argument *\-\-journal-filter*  require the path of a CSV containing a list o
 
 The argument *\-\-file	*  require the path of a txt file containing the list of papers to download organized with one paper title per line [Example](https://github.com/ferru97/PyPaperBot/blob/master/file_examples/papers.txt)
 
-##SchiHub access
+## SchiHub access
 If access to SciHub is blocked in your country, consider using a free VPN service like [ProtonVPN](https://protonvpn.com/)
 
-##Example
+## Example
 Download a maximum of 30 papers given a query and starting from 2018:
 `PyPaperBot.py --query="Machine learning" --scholar-pages=3  --min-year=2018`
 
-
+## Disclaimer
+This application is for educational purpose only. I do not take responsibility of what you choose to do with this application.
