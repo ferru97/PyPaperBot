@@ -48,9 +48,9 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit
             to_download.append(papersInfo)
          
             print("\n")
-        else:
-            for title in file:
-                to_download.append(title,None,None,None)
+    else:
+        for title in file:
+            to_download.append(title,None,None,None)
             
     
     
@@ -286,6 +286,8 @@ if __name__ == "__main__":
     if args.max_dwn_cites != None:
         max_dwn = args.max_dwn_cites
         max_dwn_type = 1
+        
+    print(titles)
         
 
     main(args.query, args.scholar_pages, dwn_dir, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, titles)
