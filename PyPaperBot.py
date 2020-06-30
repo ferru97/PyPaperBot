@@ -216,7 +216,7 @@ def getPapersInfo(papers, scholar_search_link, restrict):
                 if "author" in el:
                     paper_found.setAuthors(el["author"])
                 if "short-container-title" in el:
-                    paper_found.sc_jurnal = el["short-container-title"]
+                    paper_found.sc_jurnal = el["short-container-title"][0]
                    
                 if restrict==None or restrict!=1:    
                     #get bibtex from scholary    
@@ -286,9 +286,7 @@ if __name__ == "__main__":
     if args.max_dwn_cites != None:
         max_dwn = args.max_dwn_cites
         max_dwn_type = 1
-        
-    print(titles)
-        
+                
 
     main(args.query, args.scholar_pages, dwn_dir, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, titles)
     
