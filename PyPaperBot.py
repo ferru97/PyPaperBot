@@ -14,6 +14,7 @@ from os import path
 import pandas as pd
 import argparse
 import sys
+import re
 
 
 
@@ -49,13 +50,32 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit
          
             print("\n")
     else:
+        print("Downloading papers from file\n")
+        num = 1
         for title in file:
-            to_download.append(title,None,None,None)
+            url = "https://scholar.google.com/scholar?hl=en&q="+title+"&as_vis=1&as_sdt=1,5";
+            html = requests.get(url, headers=HEADERS)
+            html = html.text
             
+            print("Searching paper {} of {} on Google".format(str(num),str(len(file))))
+            papers = HTMLparsers.schoolarParser(html)
+            paper = [getOnePaper(papers,title.lower())]
+            
+            papersInfo = getPapersInfo(paper, url, restrict)
+            info_valids = 0
+            for x in papersInfo:
+                if x.sc_DOI!=None:
+                    info_valids += 1
+            
+            to_download.append(papersInfo)
+            num += 1
+         
+            print("\n")
+                        
     
+    to_download = [item for sublist in to_download for item in sublist] 
     
     if restrict==None or restrict!=0:
-        to_download = [item for sublist in to_download for item in sublist] 
         
         if filter_jurnal_file!=None:
            to_download = filterJurnals(to_download,filter_jurnal_file)
@@ -72,10 +92,23 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit
             to_download.sort(key=lambda x: int(x.sc_cites) if x.sc_cites!=None else 0, reverse=True)
     
     
-    SciHubDownload(to_download, dwn_dir, num_limit)
+        SciHubDownload(to_download, dwn_dir, num_limit)
           
     Paper.generateReport(to_download,dwn_dir+"result.csv")
     Paper.generateBibtex(to_download,dwn_dir+"bibtex.bib")
+    
+    
+def getOnePaper(papers,title):
+    most_similar = papers[0]
+    similar_score = 0
+    
+    for p in papers:
+        score = similarStrings(p[0], title.lower())
+        if score>similar_score:
+            similar_score = score
+            most_similar = p
+            
+    return most_similar
     
 
 def filterJurnals(papers,csv_path):
@@ -289,7 +322,6 @@ if __name__ == "__main__":
                 
 
     main(args.query, args.scholar_pages, dwn_dir, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, titles)
-    
     
     
     

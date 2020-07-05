@@ -8,7 +8,6 @@ import string
 import bibtexparser
 
 
-
 class Paper:
     
     def __init__(self,title, sc_link, sc_page, cites, link_pdf):
@@ -51,9 +50,11 @@ class Paper:
             x=x.entries
             
            
+            x[0]["author"] = x[0]["author"].replace("\\","").replace("{","").replace("}","")
             self.sc_year=x[0]["year"] if "year" in x[0] else None
             self.sc_jurnal=x[0]["journal"].replace("\\","") if "journal" in x[0] else None
-            self.sc_bibtex = str(bibtex)
+            if self.sc_jurnal==None:
+                 self.sc_jurnal=x[0]["publisher"].replace("\\","") if "publisher" in x[0] else None
             
             #take journal initials
             j_init=""
@@ -77,6 +78,10 @@ class Paper:
                 
             
             self.pdf_name =  authors_surnames + str(self.sc_year) + "_" + j_init+".pdf"
+            
+            (x[0])["ID"] = self.pdf_name[:-4]
+            self.sc_bibtex = x[0]
+            
             self.bibtex_found = True
             
         except Exception as e:
@@ -114,10 +119,18 @@ class Paper:
         content = ""
         for p in papers:
             if p.sc_bibtex!=None:
-                content += p.sc_bibtex +"\n"
+                content += "\n\n@"+p.sc_bibtex["ENTRYTYPE"]+"{"+p.sc_bibtex["ID"]
+                for key in p.sc_bibtex.keys():
+                    if key!="ENTRYTYPE" and key!="ID":
+                        content += ",\n\t"+key+" = "+"{"+p.sc_bibtex[key].encode('Windows-1252').decode('latin-1')+"}"
+                content += "\n}"
+                
            
         f = open(path, "w", encoding='utf-8-sig')
         f.write(str(content))
         f.close()
 
+          
+        
+        
             
