@@ -270,6 +270,7 @@ def getPapersInfo(papers, scholar_search_link, restrict):
 
     
 if __name__ == "__main__":
+    print("PyPaperBot is a Python tool to download scientific papers found on Google Scholar and downloaded with SciHub\n")
     
     parser = argparse.ArgumentParser(description='PyPaperBot is python tool to search and dwonload scientific papers using Google Scholar, Crossref and SciHub')
     parser.add_argument('--query', type=str, default=None, help='Query to make on Google Scholar or Google Scholar page link')
