@@ -74,7 +74,7 @@ class Paper:
             if len(self.sc_authors)>0:
                 #characters to remove from author
                 for author in self.sc_authors:
-                    authors_surnames += author[1]+"-";
+                    authors_surnames += author[1]+"_";
                 
             
             self.pdf_name =  authors_surnames + str(self.sc_year) + "_" + j_init+".pdf"
