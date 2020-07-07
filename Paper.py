@@ -6,6 +6,7 @@ Created on Mon Jun  8 21:43:30 2020
 """
 import string
 import bibtexparser
+import unidecode
 
 
 class Paper:
@@ -51,6 +52,7 @@ class Paper:
             
            
             x[0]["author"] = x[0]["author"].replace("\\","").replace("{","").replace("}","")
+            x[0]["author"] = string.capwords(x[0]["author"]).replace("And", "and")
             self.sc_year=x[0]["year"] if "year" in x[0] else None
             self.sc_jurnal=x[0]["journal"].replace("\\","") if "journal" in x[0] else None
             if self.sc_jurnal==None:
@@ -122,11 +124,14 @@ class Paper:
                 content += "\n\n@"+p.sc_bibtex["ENTRYTYPE"]+"{"+p.sc_bibtex["ID"]
                 for key in p.sc_bibtex.keys():
                     if key!="ENTRYTYPE" and key!="ID":
-                        content += ",\n\t"+key+" = "+"{"+p.sc_bibtex[key].encode('Windows-1252').decode('latin-1')+"}"
+                        val = p.sc_bibtex[key].encode('Windows-1252').decode('latin-1').replace("{","").replace("}","")
+                        content += ",\n\t"+key+" = "+"{"+val+"}"
                 content += "\n}"
                 
-           
-        f = open(path, "w", encoding='utf-8-sig')
+        
+        content = unidecode.unidecode(content).replace("'"," ")
+        
+        f = open(path, "w")
         f.write(str(content))
         f.close()
 

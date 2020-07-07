@@ -168,10 +168,10 @@ def SciHubDownload(papers, dwnl_dir, num_limit):
             paper_number += 1
             
             if p.getFileName()!=None:
-                pdf_dir = dwnl_dir + p.getFileName()
+                pdf_dir = dwnl_dir + re.sub('[^\w\-_\. ]', '_', p.getFileName())
             else:
-                pdf_dir = dwnl_dir + p.sc_title + ".pdf"
-                        
+                pdf_dir = dwnl_dir + re.sub('[^\w\-_\. ]', '_', p.sc_title) + ".pdf"
+                                    
             faild = 0
             while p.downloaded==False and faild!=4:        
                 try:   
