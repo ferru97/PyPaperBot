@@ -99,7 +99,7 @@ class Paper:
     
     def generateReport(papers, path):
     
-        content = "SC Name;SC Link;CRS DOI;Bibtex;PDF Name;Year;Scholar page;Jurnal;Downloaded;Downloaded from"
+        content = "SC Name,SC Link,CRS DOI,Bibtex,PDF Name,Year,Scholar page,Journal,Downloaded,Downloaded from"
         for p in papers:
             pdf_name = p.getFileName() if p.downloaded==True else ""
 
@@ -109,8 +109,8 @@ class Paper:
             if p.downloadedFrom == 2:
                 dwn_from = "Scholar"
                 
-            content += ("\n"+str(p.sc_title)+";"+str(p.sc_link)+";"+str(p.sc_DOI)+";"+str(p.bibtex_found)+";"+
-            str(pdf_name)+";"+str(p.sc_year)+";"+str(p.sc_page)+";"+str(p.sc_jurnal)+";"+str(p.downloaded)+";"+dwn_from)
+            content += ("\n"+str(p.sc_title)+","+str(p.sc_link)+","+str(p.sc_DOI)+","+str(p.bibtex_found)+","+
+            str(pdf_name)+","+str(p.sc_year)+","+str(p.sc_page)+","+str(p.sc_jurnal)+","+str(p.downloaded)+","+dwn_from)
            
         f = open(path, "w", encoding='utf-8-sig')
         f.write(content)
@@ -129,7 +129,7 @@ class Paper:
                 content += "\n}"
                 
         
-        content = unidecode.unidecode(content).replace("'"," ")
+        content = unidecode.unidecode(content).replace("'","")
         
         f = open(path, "w")
         f.write(str(content))
