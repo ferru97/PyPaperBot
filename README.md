@@ -39,7 +39,7 @@ If access to SciHub is blocked in your country, consider using a free VPN servic
 
 ## Example
 Download a maximum of 30 papers given a query and starting from 2018:
-`PyPaperBot.py --query="Machine learning" --scholar-pages=3  --min-year=2018`
+`python PyPaperBot.py --query="Machine learning" --scholar-pages=3  --min-year=2018`
 
 ## Disclaimer
 This application is for educational purpose only. I do not take responsibility of what you choose to do with this application.
