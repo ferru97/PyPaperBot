@@ -39,6 +39,7 @@ class Paper:
     
 
     def setAuthors(self,authors):
+        self.sc_authors = []
         for a in authors:
             name = string.capwords(a["given"]) if "given" in a else  "None"
             surname = string.capwords(a["family"]) if "family" in a else  "None"
@@ -109,8 +110,10 @@ class Paper:
             if p.downloadedFrom == 2:
                 dwn_from = "Scholar"
                 
-            content += ("\n"+str(p.sc_title)+","+str(p.sc_link)+","+str(p.sc_DOI)+","+str(p.bibtex_found)+","+
-            str(pdf_name)+","+str(p.sc_year)+","+str(p.sc_page)+","+str(p.sc_jurnal)+","+str(p.downloaded)+","+dwn_from)
+            content += ("\n"+str(p.sc_title).replace(",", "")+","+str(p.sc_link).replace(",", "")+","+
+                        str(p.sc_DOI).replace(",", "")+","+str(p.bibtex_found)+","+ str(pdf_name).replace(",", "")+
+                        ","+str(p.sc_year).replace(",", "")+","+str(p.sc_page).replace(",", "")+","+
+                        str(p.sc_jurnal).replace(",", "")+","+str(p.downloaded)+","+dwn_from)
            
         f = open(path, "w", encoding='utf-8-sig')
         f.write(content)
