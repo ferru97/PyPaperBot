@@ -278,7 +278,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='PyPaperBot is python tool to search and dwonload scientific papers using Google Scholar, Crossref and SciHub')
     parser.add_argument('--query', type=str, default=None, help='Query to make on Google Scholar or Google Scholar page link')
     parser.add_argument('--file', type=str, default=None, help='File .txt containing the list of papers to download')
-    parser.add_argument('--scholar-pages', required=True, type=int, help='Number of Google Scholar pages to inspect. Each page has a maximum of 10 papers')
+    parser.add_argument('--scholar-pages', type=int, help='Number of Google Scholar pages to inspect. Each page has a maximum of 10 papers (required for --query)')
     parser.add_argument('--dwn-dir', type=str, help='Directory path in which to save the result')
     parser.add_argument('--min-year', default=None, type=int, help='Minimal publication year of the paper to download')
     parser.add_argument('--max-dwn-year', default=None, type=int, help='Maximum number of papers to download sorted by year')
@@ -286,8 +286,9 @@ if __name__ == "__main__":
     parser.add_argument('--journal-filter', default=None, type=str ,help='CSV file path of the journal filter (More info on github)')
     parser.add_argument('--restrict', default=None, type=int ,choices=[0,1], help='0:Download only Bibtex - 1:Down load only papers PDF')
 
-
     args = parser.parse_args()
+    
+    
     dwn_dir = args.dwn_dir.replace('\\', '/')
     if dwn_dir!=None and dwn_dir[len(dwn_dir)-1]!='/':
         dwn_dir = dwn_dir + "/"
@@ -302,6 +303,10 @@ if __name__ == "__main__":
     
     if args.max_dwn_year != None and args.max_dwn_cites != None:
         print("Error: Only one option between '--max-dwn-year' and '--max-dwn-cites' can be used ")
+        sys.exit()
+        
+    if(args.query != None and args.scholar_pages==None):
+        print("Error: with --query provide also --scholar-pages")
         sys.exit()
          
     titles = None    
