@@ -59,15 +59,18 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit
             
             print("Searching paper {} of {} on Google".format(str(num),str(len(file))))
             papers = HTMLparsers.schoolarParser(html)
-            paper = [getOnePaper(papers,title.lower())]
-            
-            papersInfo = getPapersInfo(paper, url, restrict)
-            info_valids = 0
-            for x in papersInfo:
-                if x.sc_DOI!=None:
-                    info_valids += 1
-            
-            to_download.append(papersInfo)
+            if(len(papers)>0):
+                paper = [getOnePaper(papers,title.lower())]
+                
+                papersInfo = getPapersInfo(paper, url, restrict)
+                info_valids = 0
+                for x in papersInfo:
+                    if x.sc_DOI!=None:
+                        info_valids += 1
+                
+                to_download.append(papersInfo)
+            else:
+                print("Paper not found")
             num += 1
          
             print("\n")
