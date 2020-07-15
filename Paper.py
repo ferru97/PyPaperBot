@@ -127,7 +127,12 @@ class Paper:
                 content += "\n\n@"+p.sc_bibtex["ENTRYTYPE"]+"{"+p.sc_bibtex["ID"]
                 for key in p.sc_bibtex.keys():
                     if key!="ENTRYTYPE" and key!="ID":
-                        val = p.sc_bibtex[key].encode('Windows-1252').decode('latin-1').replace("{","").replace("}","")
+                        try:
+                          val = p.sc_bibtex[key].encode('Windows-1252').decode('latin-1').replace("{","").replace("}","")
+                        except:
+                          print("Encoding error")
+                          val = p.sc_bibtex[key].replace("{","").replace("}","")
+                        
                         content += ",\n\t"+key+" = "+"{"+val+"}"
                 content += "\n}"
                 
