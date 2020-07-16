@@ -160,7 +160,7 @@ class Paper:
         
         relace_list = ["\ast","*","#"]
         for c in relace_list:
-            content = content.replace("'","").replace("\ast","")
+            content = content.replace(c,"")
         
         f = open(path, "w")
         f.write(str(content))
