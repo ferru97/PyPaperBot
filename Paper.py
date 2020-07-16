@@ -82,7 +82,7 @@ class Paper:
             
             self.pdf_name =  authors_surnames + str(self.sc_year) + "_" + j_init+".pdf"
             
-            (x[0])["ID"] = self.pdf_name[:-4]
+            (x[0])["ID"] = self.pdf_name[:-4].replace(" ","-")
             self.sc_bibtex = x[0]
             
             self.bibtex_found = True
@@ -99,6 +99,12 @@ class Paper:
             
     
     def generateReport(papers, path):
+        def strFix(s):
+            if(len(str(s))==0):
+                return "None"
+            else:
+                return str(s).replace(",", "").rstrip('\n')
+            
     
         content = "SC Name,SC Link,CRS DOI,Bibtex,PDF Name,Year,Scholar page,Journal,Downloaded,Downloaded from"
         for p in papers:
@@ -110,10 +116,10 @@ class Paper:
             if p.downloadedFrom == 2:
                 dwn_from = "Scholar"
                 
-            content += ("\n"+str(p.sc_title).replace(",", "")+","+str(p.sc_link).replace(",", "")+","+
-                        str(p.sc_DOI).replace(",", "")+","+str(p.bibtex_found)+","+ str(pdf_name).replace(",", "")+
-                        ","+str(p.sc_year).replace(",", "")+","+str(p.sc_page).replace(",", "")+","+
-                        str(p.sc_jurnal).replace(",", "")+","+str(p.downloaded)+","+dwn_from)
+            content += ("\n"+strFix(p.sc_title)+","+strFix(p.sc_link)+","+
+                        strFix(p.sc_DOI)+","+strFix(p.bibtex_found)+","+ strFix(pdf_name)+
+                        ","+strFix(p.sc_year)+","+strFix(p.sc_page)+","+
+                        strFix(p.sc_jurnal)+","+strFix(p.downloaded)+","+strFix(dwn_from))
            
         f = open(path, "w", encoding='utf-8-sig')
         f.write(content)
@@ -122,8 +128,20 @@ class Paper:
         
     def generateBibtex(papers, path):
         content = ""
+            
         for p in papers:
             if p.sc_bibtex!=None:
+                
+                authors_bbx = ""
+                first = True
+                for a in p.sc_authors:
+                    if first==False:
+                        authors_bbx += " and "
+                    else:
+                        first=False
+                        
+                    authors_bbx += a[0]+", "+a[1]
+                
                 content += "\n\n@"+p.sc_bibtex["ENTRYTYPE"]+"{"+p.sc_bibtex["ID"]
                 for key in p.sc_bibtex.keys():
                     if key!="ENTRYTYPE" and key!="ID":
@@ -132,12 +150,17 @@ class Paper:
                         except:
                           print("Encoding error")
                           val = p.sc_bibtex[key].replace("{","").replace("}","")
+                         
+                        if key=="author":
+                            val = authors_bbx
                         
                         content += ",\n\t"+key+" = "+"{"+val+"}"
                 content += "\n}"
                 
         
-        content = unidecode.unidecode(content).replace("'","")
+        relace_list = ["\ast","*","#"]
+        for c in relace_list:
+            content = content.replace("'","").replace("\ast","")
         
         f = open(path, "w")
         f.write(str(content))

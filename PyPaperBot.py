@@ -22,6 +22,7 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit
     
     HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'}
     
+    last_blocked = False
     to_download = []
     if file==None:
         if len(query)>2 and (query[0:7]=="http://" or query[0:8]=="https://"):
@@ -30,7 +31,8 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit
             url = "https://scholar.google.com/scholar?hl=en&q="+query+"&as_vis=1&as_sdt=1,5";
         
 
-        for i in range(0,scholar_pages):
+        i = 0
+        while i < scholar_pages:
             if i>0:
                 url = url + "&start=" + str(10*i)
             html = requests.get(url, headers=HEADERS)
@@ -39,20 +41,30 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit
             papers = HTMLparsers.schoolarParser(html)
             print("Google Scholar page "+str(i+1)+" : "+str(len(papers))+" papers found")
             
-            papersInfo = getPapersInfo(papers, url, restrict)
-            info_valids = 0
-            for x in papersInfo:
-                if x.sc_DOI!=None:
-                    info_valids += 1
-            print("Papers info from Crossref: "+str(info_valids))
-            
-            to_download.append(papersInfo)
-         
+            if(len(papers)>0):
+                papersInfo = getPapersInfo(papers, url, restrict)
+                info_valids = 0
+                for x in papersInfo:
+                    if x.sc_DOI!=None:
+                        info_valids += 1
+                print("Papers info from Crossref: "+str(info_valids))
+                
+                to_download.append(papersInfo)
+            else:
+                if last_blocked==False:
+                    waithIPchange()
+                    last_blocked = True
+                    i = i - 1
+                else:
+                    last_blocked = False
+            i = i + 1
             print("\n")
     else:
         print("Downloading papers from file\n")
         num = 1
-        for title in file:
+        i = 0
+        while i<len(file):
+            title = file[i]
             url = "https://scholar.google.com/scholar?hl=en&q="+title+"&as_vis=1&as_sdt=1,5";
             html = requests.get(url, headers=HEADERS)
             html = html.text
@@ -71,7 +83,14 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit
                 to_download.append(papersInfo)
             else:
                 print("Paper not found")
+                if last_blocked==False:
+                    waithIPchange()
+                    last_blocked = True
+                    i = i - 1
+                else:
+                    last_blocked = False
             num += 1
+            i = i + 1
          
             print("\n")
                         
@@ -112,6 +131,10 @@ def getOnePaper(papers,title):
             most_similar = p
             
     return most_similar
+
+
+def waithIPchange():
+    input("You have been blocked, change your IP or VPN, than press Enter...")
     
 
 def filterJurnals(papers,csv_path):
