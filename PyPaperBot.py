@@ -21,6 +21,7 @@ import re
 def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit_type=None, filter_jurnal_file=None, restrict=None, file=None):
     
     HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'}
+    javascript_error = "Sorry, we can't verify that you're not a robot when JavaScript is turned off"
     
     last_blocked = False
     to_download = []
@@ -38,18 +39,25 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit
             html = requests.get(url, headers=HEADERS)
             html = html.text
             
-            papers = HTMLparsers.schoolarParser(html)
-            print("Google Scholar page "+str(i+1)+" : "+str(len(papers))+" papers found")
+            bot_spotted = False
+            if javascript_error in html:
+                bot_spotted = True
             
-            if(len(papers)>0):
-                papersInfo = getPapersInfo(papers, url, restrict)
-                info_valids = 0
-                for x in papersInfo:
-                    if x.sc_DOI!=None:
-                        info_valids += 1
-                print("Papers info from Crossref: "+str(info_valids))
+            if bot_spotted == False:       
+                papers = HTMLparsers.schoolarParser(html)
+                print("Google Scholar page "+str(i+1)+" : "+str(len(papers))+" papers found")
                 
-                to_download.append(papersInfo)
+                if(len(papers)>0):
+                    papersInfo = getPapersInfo(papers, url, restrict)
+                    info_valids = 0
+                    for x in papersInfo:
+                        if x.sc_DOI!=None:
+                            info_valids += 1
+                    print("Papers info from Crossref: "+str(info_valids))
+                    
+                    to_download.append(papersInfo)
+                else:
+                    print("Paper not found...")
             else:
                 if last_blocked==False:
                     waithIPchange()
@@ -69,20 +77,26 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit
             html = requests.get(url, headers=HEADERS)
             html = html.text
             
-            print("Searching paper {} of {} on Google".format(str(num),str(len(file))))
-            papers = HTMLparsers.schoolarParser(html)
-            if(len(papers)>0):
-                paper = [getOnePaper(papers,title.lower())]
+            bot_spotted = False
+            if javascript_error in html:
+                bot_spotted = True
                 
-                papersInfo = getPapersInfo(paper, url, restrict)
-                info_valids = 0
-                for x in papersInfo:
-                    if x.sc_DOI!=None:
-                        info_valids += 1
-                
-                to_download.append(papersInfo)
+            if bot_spotted == False:
+                print("Searching paper {} of {} on Google".format(str(num),str(len(file))))
+                papers = HTMLparsers.schoolarParser(html)
+                if(len(papers)>0):
+                    paper = [getOnePaper(papers,title.lower())]
+                    
+                    papersInfo = getPapersInfo(paper, url, restrict)
+                    info_valids = 0
+                    for x in papersInfo:
+                        if x.sc_DOI!=None:
+                            info_valids += 1
+                    
+                    to_download.append(papersInfo)
+                else:
+                    print("Paper not found...")
             else:
-                print("Paper not found")
                 if last_blocked==False:
                     waithIPchange()
                     last_blocked = True

@@ -70,7 +70,6 @@ class Paper:
                     j_init = j_init + jurnal_temp[i][0].upper() #iniziali journal
     
             
-            
             authors_surnames = ""
             if len(self.sc_authors)>0:
                 #characters to remove from author
@@ -138,7 +137,7 @@ class Paper:
                     else:
                         first=False
                         
-                    authors_bbx += a[0]+", "+a[1]
+                    authors_bbx += a[1]+", "+a[0]
                 
                 content += "\n\n@"+p.sc_bibtex["ENTRYTYPE"]+"{"+p.sc_bibtex["ID"]
                 for key in p.sc_bibtex.keys():
