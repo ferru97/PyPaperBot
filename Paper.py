@@ -6,8 +6,6 @@ Created on Mon Jun  8 21:43:30 2020
 """
 import string
 import bibtexparser
-import unidecode
-
 
 class Paper:
     
@@ -88,7 +86,7 @@ class Paper:
             self.bibtex_found = True
             
         except Exception as e:
-                print(e)
+                print("Exception :" + e)
                     
             
     def canBeDownloaded(self):
@@ -162,7 +160,7 @@ class Paper:
         for c in relace_list:
             content = content.replace(c,"")
         
-        f = open(path, "w")
+        f = open(path, "w", encoding="latin-1", errors="ignore")
         f.write(str(content))
         f.close()
 

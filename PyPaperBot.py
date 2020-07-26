@@ -87,6 +87,7 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit
                     waithIPchange()
                     last_blocked = True
                     i = i - 1
+                    num = num - 1
                 else:
                     last_blocked = False
             num += 1
@@ -134,7 +135,10 @@ def getOnePaper(papers,title):
 
 
 def waithIPchange():
-    input("You have been blocked, change your IP or VPN, than press Enter...")
+    input("You have been blocked, change your IP or VPN than press Enter...")
+    print("Wait 30 seconds...")
+    time.sleep(30)
+    
     
 
 def filterJurnals(papers,csv_path):
@@ -338,7 +342,7 @@ if __name__ == "__main__":
         f = args.file.replace('\\', '/')
         with open(f) as file_in:
             for line in file_in:
-                titles.append(line)
+                titles.append(line[:-1])
         
     if args.query!=None:
         print("Query: {} \n".format(args.query))    
