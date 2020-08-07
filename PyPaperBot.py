@@ -7,6 +7,8 @@ import requests
 import time
 import random
 from crossref_commons.iteration import iterate_publications_as_json
+from crossref_commons.retrieval import get_entity
+from crossref_commons.types import EntityType, OutputType
 from difflib import SequenceMatcher
 import HTMLparsers
 from Paper import Paper
@@ -15,6 +17,7 @@ import pandas as pd
 import argparse
 import sys
 import re
+
 
 
 
@@ -68,46 +71,17 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit
             i = i + 1
             print("\n")
     else:
-        print("Downloading papers from file\n")
+        print("Downloading papers from DOIs\n")
         num = 1
         i = 0
         while i<len(file):
-            title = file[i]
-            url = "https://scholar.google.com/scholar?hl=en&q="+title+"&as_vis=1&as_sdt=1,5";
-            html = requests.get(url, headers=HEADERS)
-            html = html.text
+            print("Searching paper {} of {} with DOI".format(str(num),str(len(file))))
+            DOI = file[i]
+            papersInfo = getPaperInfoFromDOI(DOI, restrict)
+            to_download.append([papersInfo])
             
-            bot_spotted = False
-            if javascript_error in html:
-                bot_spotted = True
-                
-            if bot_spotted == False:
-                print("Searching paper {} of {} on Google".format(str(num),str(len(file))))
-                papers = HTMLparsers.schoolarParser(html)
-                if(len(papers)>0):
-                    paper = [getOnePaper(papers,title.lower())]
-                    
-                    papersInfo = getPapersInfo(paper, url, restrict)
-                    info_valids = 0
-                    for x in papersInfo:
-                        if x.sc_DOI!=None:
-                            info_valids += 1
-                    
-                    to_download.append(papersInfo)
-                else:
-                    print("Paper not found...")
-            else:
-                if last_blocked==False:
-                    waithIPchange()
-                    last_blocked = True
-                    i = i - 1
-                    num = num - 1
-                else:
-                    last_blocked = False
             num += 1
-            i = i + 1
-         
-            print("\n")
+            i +=  1
                         
     
     to_download = [item for sublist in to_download for item in sublist] 
@@ -134,18 +108,6 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit
     Paper.generateReport(to_download,dwn_dir+"result.csv")
     Paper.generateBibtex(to_download,dwn_dir+"bibtex.bib")
     
-    
-def getOnePaper(papers,title):
-    most_similar = papers[0]
-    similar_score = 0
-    
-    for p in papers:
-        score = similarStrings(p[0], title.lower())
-        if score>similar_score:
-            similar_score = score
-            most_similar = p
-            
-    return most_similar
 
 
 def waithIPchange():
@@ -268,6 +230,40 @@ def getTimestamp(paper):
     return timestamp
 
 
+
+def getPaperInfoFromDOI(DOI, restrict):
+    paper_found = Paper(None,None,None, None, None)
+    paper_found.sc_DOI = DOI
+    
+    try:
+        paper = get_entity(DOI, EntityType.PUBLICATION, OutputType.JSON)
+        if paper!=None and len(paper)>0:
+            if "title" in paper:
+                paper_found.sc_title = paper["title"][0]
+            if "author" in paper:
+                paper_found.setAuthors(paper["author"])
+            if "short-container-title" in paper and len(paper["short-container-title"])>0:
+                paper_found.sc_jurnal = paper["short-container-title"][0]
+                
+            if restrict==None or restrict!=1:    
+                        paper_found.setBibtex(getBibtex(paper_found.sc_DOI))
+    except:
+        print("Paper not found "+DOI)
+        pass
+            
+    return paper_found
+
+
+def getBibtex(DOI):
+    try: 
+        url_bibtex = "http://api.crossref.org/works/" + DOI + "/transform/application/x-bibtex"
+        x = requests.get(url_bibtex)
+        return str(x.text)
+    except:
+        return None
+        
+
+
 def getPapersInfo(papers, scholar_search_link, restrict):
     papers_return = []
     num = 1
@@ -292,17 +288,11 @@ def getPapersInfo(papers, scholar_search_link, restrict):
                     paper_found.sc_DOI = el["DOI"].strip().lower()
                 if "author" in el:
                     paper_found.setAuthors(el["author"])
-                if "short-container-title" in el:
+                if "short-container-title" in el and len(paper["short-container-title"])>0:
                     paper_found.sc_jurnal = el["short-container-title"][0]
                    
                 if restrict==None or restrict!=1:    
-                    #get bibtex from scholary    
-                    try: 
-                        url_bibtex = "http://api.crossref.org/works/" + paper_found.sc_DOI + "/transform/application/x-bibtex"
-                        x = requests.get(url_bibtex)
-                        paper_found.setBibtex(str(x.text))
-                    except:
-                        pass
+                    paper_found.setBibtex(getBibtex(paper_found.sc_DOI))
  
                 found = True        
             
@@ -356,7 +346,10 @@ if __name__ == "__main__":
         f = args.file.replace('\\', '/')
         with open(f) as file_in:
             for line in file_in:
-                titles.append(line[:-1])
+                if line[len(line)-1]=='\n':
+                    titles.append(line[:-1])
+                else:
+                    titles.append(line)
         
     if args.query!=None:
         print("Query: {} \n".format(args.query))    

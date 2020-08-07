@@ -14,7 +14,7 @@ PyPaperBot arguments:
 | Arguments  | Description | Type
 | ------------- | ------------- |------------- |
 | \-\-query  | Query to make on Google Scholar or Google Scholar page link  |string|
-| \-\-file  |File .txt containing the list of papers to download  |string|
+| \-\-file  |File .txt containing the list of paper's DOIs to download  |string|
 | \-\-scholar-pages  | Number of Google Scholar pages to inspect. Each page has a maximum of 10 papers  |int|
 | \-\-dwn-dir  | Directory path in which to save the result  |string|
 | \-\-min-year  | Minimal publication year of the paper to download  |int|
@@ -32,7 +32,7 @@ The arguments *\-\-scholar-pages* and one between  *\-\-query *and* \-\-file* ar
 
 The argument *\-\-journal-filter*  require the path of a CSV containing a list of journal name paired with a boolean which indicates whether or not to consider that journal (0: don't consider /1: consider) [Example](https://github.com/ferru97/PyPaperBot/blob/master/file_examples/jurnals.csv)
 
-The argument *\-\-file*  require the path of a txt file containing the list of papers to download organized with one paper title per line [Example](https://github.com/ferru97/PyPaperBot/blob/master/file_examples/papers.txt)
+The argument *\-\-file*  require the path of a txt file containing the list of paper's DOIs to download organized with one DOI per line [Example](https://github.com/ferru97/PyPaperBot/blob/master/file_examples/papers.txt)
 
 ## SchiHub access
 If access to SciHub is blocked in your country, consider using a free VPN service like [ProtonVPN](https://protonvpn.com/)
