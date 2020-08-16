@@ -17,59 +17,64 @@ import pandas as pd
 import argparse
 import sys
 import re
+import functools 
 
+
+
+HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'}
+    
+
+def downloadFromQuery(query, scholar_pages, restrict):
+    global HEADERS
+    javascript_error = "Sorry, we can't verify that you're not a robot when JavaScript is turned off"
+    
+    if len(query)>2 and (query[0:7]=="http://" or query[0:8]=="https://"):
+            url = query
+    else:
+        url = "https://scholar.google.com/scholar?hl=en&q="+query+"&as_vis=1&as_sdt=1,5";
+        
+        
+    to_download = []
+    last_blocked = False
+    i = 0
+    while i < scholar_pages:
+        if i>0:
+            url = url + "&start=" + str(10*i)
+        html = requests.get(url, headers=HEADERS)
+        html = html.text
+        
+        if javascript_error in html and last_blocked==False:
+            waithIPchange()
+            i = i - 1
+            continue
+        else:
+            last_blocked=False
+        
+        papers = HTMLparsers.schoolarParser(html)
+        print("Google Scholar page "+str(i+1)+" : "+str(len(papers))+" papers found")
+        
+        if(len(papers)>0):
+            papersInfo = getPapersInfo(papers, url, restrict)
+            info_valids = functools.reduce(lambda a,b : a+1 if b.sc_DOI!=None else a, papersInfo, 0)
+            print("Papers info from Crossref: "+str(info_valids))
+            
+            to_download.append(papersInfo)
+        else:
+            print("Paper not found...")
+
+        i = i + 1
+        print("\n")
+        
+        return to_download
+    
 
 
 
 def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit_type=None, filter_jurnal_file=None, restrict=None, file=None):
     
-    HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'}
-    javascript_error = "Sorry, we can't verify that you're not a robot when JavaScript is turned off"
-    
-    last_blocked = False
     to_download = []
     if file==None:
-        if len(query)>2 and (query[0:7]=="http://" or query[0:8]=="https://"):
-            url = query
-        else:
-            url = "https://scholar.google.com/scholar?hl=en&q="+query+"&as_vis=1&as_sdt=1,5";
-        
-
-        i = 0
-        while i < scholar_pages:
-            if i>0:
-                url = url + "&start=" + str(10*i)
-            html = requests.get(url, headers=HEADERS)
-            html = html.text
-            
-            bot_spotted = False
-            if javascript_error in html:
-                bot_spotted = True
-            
-            if bot_spotted == False:       
-                papers = HTMLparsers.schoolarParser(html)
-                print("Google Scholar page "+str(i+1)+" : "+str(len(papers))+" papers found")
-                
-                if(len(papers)>0):
-                    papersInfo = getPapersInfo(papers, url, restrict)
-                    info_valids = 0
-                    for x in papersInfo:
-                        if x.sc_DOI!=None:
-                            info_valids += 1
-                    print("Papers info from Crossref: "+str(info_valids))
-                    
-                    to_download.append(papersInfo)
-                else:
-                    print("Paper not found...")
-            else:
-                if last_blocked==False:
-                    waithIPchange()
-                    last_blocked = True
-                    i = i - 1
-                else:
-                    last_blocked = False
-            i = i + 1
-            print("\n")
+        to_download = downloadFromQuery(query, scholar_pages, restrict)
     else:
         print("Downloading papers from DOIs\n")
         num = 1
@@ -86,6 +91,7 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit
     
     to_download = [item for sublist in to_download for item in sublist] 
     
+    PDFs = None
     if restrict==None or restrict!=0:
         
         if filter_jurnal_file!=None:
@@ -103,10 +109,10 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit
             to_download.sort(key=lambda x: int(x.sc_cites) if x.sc_cites!=None else 0, reverse=True)
     
     
-        SciHubDownload(to_download, dwn_dir, num_limit)
+        PDFs = SciHubDownload(to_download, dwn_dir, num_limit)
           
-    Paper.generateReport(to_download,dwn_dir+"result.csv")
-    Paper.generateBibtex(to_download,dwn_dir+"bibtex.bib")
+    report = Paper.generateReport(to_download,dwn_dir+"result.csv")
+    bibtexc = Paper.generateBibtex(to_download,dwn_dir+"bibtex.bib")
     
 
 
@@ -156,10 +162,13 @@ def saveFile(file_name,content, paper,dwn_source):
        file_name = file_name_temp
        
     
-    with open(file_name, 'wb') as f:
-        f.write(content)
-        paper.downloaded = True
-        paper.downloadedFrom = dwn_source
+    f = open(file_name, 'wb')
+    f.write(content)
+    f.close()
+    paper.downloaded = True
+    paper.downloadedFrom = dwn_source
+    
+    return f
         
     
 def SciHubDownload(papers, dwnl_dir, num_limit):
@@ -168,6 +177,7 @@ def SciHubDownload(papers, dwnl_dir, num_limit):
     
     num_downloaded = 0
     paper_number = 1
+    paper_files = []
     for p in papers: 
         if p.canBeDownloaded() and (num_limit==None or num_downloaded<num_limit):        
             print("Download "+str(paper_number)+" of "+str(len(papers))+" -> "+str(p.sc_title))
@@ -210,7 +220,7 @@ def SciHubDownload(papers, dwnl_dir, num_limit):
                                 content_type = r.headers.get('content-type')
     
                         if 'application/pdf' in content_type:
-                            saveFile(pdf_dir,r.content,p,dwn_source)
+                            paper_files.append(saveFile(pdf_dir,r.content,p,dwn_source))
                         
                     faild += 1
                 except:
@@ -263,12 +273,16 @@ def getBibtex(DOI):
         return None
         
 
-
+#♥Get paper information from Crossref and return a list of Paper
 def getPapersInfo(papers, scholar_search_link, restrict):
     papers_return = []
     num = 1
     for paper in papers:
         title = paper[0].lower()
+        link = paper[1]
+        cites = paper[2]
+        pdf_link = paper[3]
+        
         queries = {'query.bibliographic': title,'sort':'relevance',"select":"DOI,title,deposited,author,short-container-title"}
         
         print("Searching paper {} of {} on Crossref...".format(int(num),int(len(papers))))
@@ -276,7 +290,7 @@ def getPapersInfo(papers, scholar_search_link, restrict):
 
         found = False;
         found_timestamp = 0
-        paper_found = Paper(title,paper[1],scholar_search_link, paper[2], paper[3])
+        paper_found = Paper(title,link,scholar_search_link, cites, pdf_link)
         for el in iterate_publications_as_json(max_results=30, queries=queries):
            
             el_date = getTimestamp(el);
@@ -288,7 +302,7 @@ def getPapersInfo(papers, scholar_search_link, restrict):
                     paper_found.sc_DOI = el["DOI"].strip().lower()
                 if "author" in el:
                     paper_found.setAuthors(el["author"])
-                if "short-container-title" in el and len(paper["short-container-title"])>0:
+                if "short-container-title" in el and len(el["short-container-title"])>0:
                     paper_found.sc_jurnal = el["short-container-title"][0]
                    
                 if restrict==None or restrict!=1:    
@@ -310,7 +324,7 @@ if __name__ == "__main__":
     parser.add_argument('--query', type=str, default=None, help='Query to make on Google Scholar or Google Scholar page link')
     parser.add_argument('--file', type=str, default=None, help='File .txt containing the list of papers to download')
     parser.add_argument('--scholar-pages', type=int, help='Number of Google Scholar pages to inspect. Each page has a maximum of 10 papers (required for --query)')
-    parser.add_argument('--dwn-dir', type=str, help='Directory path in which to save the result')
+    parser.add_argument('--dwn-dir', type=str, help='Directory path in which to save the results')
     parser.add_argument('--min-year', default=None, type=int, help='Minimal publication year of the paper to download')
     parser.add_argument('--max-dwn-year', default=None, type=int, help='Maximum number of papers to download sorted by year')
     parser.add_argument('--max-dwn-cites', default=None, type=int, help='Maximum number of papers to download sorted by number of citations')
@@ -319,6 +333,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     
+    
+    if args.dwn_dir==None:
+        print("Error, provide the directory path in which to save the results")
+        sys.exit()
     
     dwn_dir = args.dwn_dir.replace('\\', '/')
     if dwn_dir!=None and dwn_dir[len(dwn_dir)-1]!='/':

@@ -45,11 +45,11 @@ class Paper:
 
     
     def setBibtex(self,bibtex):
-        try:
-            x=bibtexparser.loads(bibtex, parser=None)
-            x=x.entries
-            
-           
+        x=bibtexparser.loads(bibtex, parser=None)
+        x=x.entries
+        self.sc_bibtex = x[0]
+        self.bibtex_found = True
+        try: 
             x[0]["author"] = x[0]["author"].replace("\\","").replace("{","").replace("}","")
             x[0]["author"] = string.capwords(x[0]["author"]).replace("And", "and")
             self.sc_year=x[0]["year"] if "year" in x[0] else None
@@ -80,12 +80,8 @@ class Paper:
             self.pdf_name =  authors_surnames + str(self.sc_year) + "_" + j_init+".pdf"
             
             (x[0])["ID"] = self.pdf_name[:-4].replace(" ","-")
-            self.sc_bibtex = x[0]
-            
-            self.bibtex_found = True
-            
-        except Exception as e:
-                print("Exception :" + e)
+        except Exception:
+                pass
                     
             
     def canBeDownloaded(self):
@@ -121,6 +117,8 @@ class Paper:
         f = open(path, "w", encoding='utf-8-sig')
         f.write(content)
         f.close()
+        
+        return f
         
         
     def generateBibtex(papers, path):
@@ -162,6 +160,8 @@ class Paper:
         f = open(path, "w", encoding="latin-1", errors="ignore")
         f.write(str(content))
         f.close()
+        
+        return f
 
           
         

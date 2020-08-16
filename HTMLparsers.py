@@ -6,9 +6,6 @@ Created on Sun Jun  7 11:59:42 2020
 """
 from bs4 import BeautifulSoup
 
-gErrors = ["This page appears when Google automatically detects requests coming from your computer network which appear to be in violation of the","Attiva JavaScript"]
-
-
 def schoolarParser(html):
     result = []
     soup = BeautifulSoup(html, "html.parser")
