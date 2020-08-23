@@ -34,7 +34,6 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit
                         
     
     if restrict!=0:
-        
         if filter_jurnal_file!=None:
            to_download = filterJurnals(to_download,filter_jurnal_file)
        
@@ -56,7 +55,7 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit
 
 
 if __name__ == "__main__":
-    print("PyPaperBot is a Python tool to download scientific papers found on Google Scholar and downloaded with SciHub\n")
+    print("PyPaperBot is a Python tool for downloading scientific papers using Google Scholar, Crossref and SciHub.\n")
     
     parser = argparse.ArgumentParser(description='PyPaperBot is python tool to search and dwonload scientific papers using Google Scholar, Crossref and SciHub')
     parser.add_argument('--query', type=str, default=None, help='Query to make on Google Scholar or Google Scholar page link')
@@ -78,14 +77,14 @@ if __name__ == "__main__":
         
     if (args.query!=None and args.doi_file!=None) or (args.query!=None and args.doi!=None) or (args.doi!=None and args.doi_file!=None):
         print("Error: Only one option between '--query', '--doi-file' and '--doi' can be used")
-        sys.exit()#
+        sys.exit()
 
     if args.dwn_dir==None:
         print("Error, provide the directory path in which to save the results")
         sys.exit()
     
     dwn_dir = args.dwn_dir.replace('\\', '/')
-    if dwn_dir!=None and dwn_dir[len(dwn_dir)-1]!='/':
+    if dwn_dir[len(dwn_dir)-1]!='/':
         dwn_dir = dwn_dir + "/"
     
     if args.max_dwn_year != None and args.max_dwn_cites != None:
