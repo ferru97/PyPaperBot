@@ -53,5 +53,13 @@ Download a paper given the DOI:
 Download papers given a file containing the DOIs:
 `python PyPaperBot.py --doi-file="C:\User\example\papers\file.txt" --dwn-dir="C:\User\example\papers"`
 
+## Contributions
+Feel free to contribute to this project bt proposing any change, fix and enhancement on the **dev** branch
+
+### To do
+- Tests
+- Code documentation
+- General improvements
+
 ## Disclaimer
-This application is for educational purpose only. I do not take responsibility of what you choose to do with this application.
+This application is for educational purposes only. I do not take responsibility for what you choose to do with this application.
