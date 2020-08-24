@@ -8,7 +8,7 @@ setup(
   author = 'Vito Ferrulli',
   author_email = 'vitof970@gmail.com',
   url = 'https://github.com/ferru97/PyPaperBot',
-  download_url = '',# 
+  download_url = 'https://github.com/ferru97/PyPaperBot/archive/v0.9-beta.tar.gz',
   keywords = ['download-papers','google-scholar', 'scihub', 'scholar', 'crossref', 'papers'],
   install_requires=[          
         'astroid==2.4.2',
@@ -41,7 +41,7 @@ setup(
   classifiers=[
     'Development Status :: 4 - Beta',
     'Intended Audience :: Researchers',
-    'Topic :: Software Development :: Build Tools',
+    'Topic :: Research  papers :: Download Tools',
     'License :: OSI Approved :: MIT License',  
     'Programming Language :: Python :: 3',
     'Programming Language :: Python :: 3.4',
