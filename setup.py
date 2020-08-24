@@ -56,4 +56,9 @@ setup(
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
   ],
+  entrypoints={ 
+       "console_scripts":[ 
+           "PyPaperBot=PyPaperBot.__main__:main", 
+       ] 
+   }, 
 )
