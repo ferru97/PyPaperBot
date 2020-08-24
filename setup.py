@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 setup(
   name = 'PyPaperBot',        
   packages = ['PyPaperBot'],  
-  version = '0.9',     
+  version = '0.9.1',     
   license='MIT', 
   description = 'PyPaperBot is a Python tool for downloading scientific papers using Google Scholar, Crossref, and SciHub.',
   author = 'Vito Ferrulli',
