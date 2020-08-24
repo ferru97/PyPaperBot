@@ -52,13 +52,19 @@ If access to SciHub is blocked in your country, consider using a free VPN servic
 
 ## Example
 Download a maximum of 30 papers given a query and starting from 2018:
-`python PyPaperBot.py --query="Machine learning" --scholar-pages=3  --min-year=2018 --dwn-dir="C:\User\example\papers"`
+```bash
+python PyPaperBot.py --query="Machine learning" --scholar-pages=3  --min-year=2018 --dwn-dir="C:\User\example\papers"
+```
 
 Download a paper given the DOI:
-`python PyPaperBot.py --doi="10.0086/s41037-711-0132-1" --dwn-dir="C:\User\example\papers"`
+```bash
+python PyPaperBot.py --doi="10.0086/s41037-711-0132-1" --dwn-dir="C:\User\example\papers"`
+```
 
 Download papers given a file containing the DOIs:
-`python PyPaperBot.py --doi-file="C:\User\example\papers\file.txt" --dwn-dir="C:\User\example\papers"`
+```bash
+python PyPaperBot.py --doi-file="C:\User\example\papers\file.txt" --dwn-dir="C:\User\example\papers"`
+```
 
 ## Contributions
 Feel free to contribute to this project bt proposing any change, fix and enhancement on the **dev** branch
