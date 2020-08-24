@@ -9,6 +9,8 @@ setup(
   version = '0.9.1',     
   license='MIT', 
   description = 'PyPaperBot is a Python tool for downloading scientific papers using Google Scholar, Crossref, and SciHub.',
+  long_description=long_description,
+  long_description_content_type="text/markdown",
   author = 'Vito Ferrulli',
   author_email = 'vitof970@gmail.com',
   url = 'https://github.com/ferru97/PyPaperBot',
