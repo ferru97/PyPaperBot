@@ -53,17 +53,22 @@ If access to SciHub is blocked in your country, consider using a free VPN servic
 ## Example
 Download a maximum of 30 papers given a query and starting from 2018:
 ```bash
-python PyPaperBot.py --query="Machine learning" --scholar-pages=3  --min-year=2018 --dwn-dir="C:\User\example\papers"
+python PyPaperBot --query="Machine learning" --scholar-pages=3  --min-year=2018 --dwn-dir="C:\User\example\papers"
 ```
 
 Download a paper given the DOI:
 ```bash
-python PyPaperBot.py --doi="10.0086/s41037-711-0132-1" --dwn-dir="C:\User\example\papers"`
+python PyPaperBot --doi="10.0086/s41037-711-0132-1" --dwn-dir="C:\User\example\papers"`
 ```
 
 Download papers given a file containing the DOIs:
 ```bash
-python PyPaperBot.py --doi-file="C:\User\example\papers\file.txt" --dwn-dir="C:\User\example\papers"`
+python PyPaperBot --doi-file="C:\User\example\papers\file.txt" --dwn-dir="C:\User\example\papers"`
+```
+
+If it doesn't work, try to use *py* instead of *python* i.e.
+```bash
+py PyPaperBot --doi="10.0086/s41037-711-0132-1" --dwn-dir="C:\User\example\papers"`
 ```
 
 ## Contributions

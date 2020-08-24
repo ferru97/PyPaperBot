@@ -13,7 +13,7 @@ from Scholar import ScholarPapersInfo
 from Crossref import getPapersInfoFromDOIs
 
 
-def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit_type=None, filter_jurnal_file=None, restrict=None, DOIs=None):
+def start(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit_type=None, filter_jurnal_file=None, restrict=None, DOIs=None):
     
     to_download = []
     if DOIs==None:
@@ -54,7 +54,7 @@ def main(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit
 
 
 
-if __name__ == "__main__":
+def main():
     print("PyPaperBot is a Python tool for downloading scientific papers using Google Scholar, Crossref and SciHub.\n")
     
     parser = argparse.ArgumentParser(description='PyPaperBot is python tool to search and dwonload scientific papers using Google Scholar, Crossref and SciHub')
@@ -119,7 +119,12 @@ if __name__ == "__main__":
         max_dwn_type = 1
                 
 
-    main(args.query, args.scholar_pages, dwn_dir, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, DOIs)
+    start(args.query, args.scholar_pages, dwn_dir, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, DOIs)
+
+
+
+if __name__ == "__main__":
+    main()
     
     
     

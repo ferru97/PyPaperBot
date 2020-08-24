@@ -6,6 +6,11 @@ with open("README.md", "r") as fh:
 setup(
   name = 'PyPaperBot',        
   packages = ['PyPaperBot'],  
+  entrypoints={ 
+       "console_scripts":[ 
+           "PyPaperBot=PyPaperBot.__main__:main", 
+       ] 
+  }, 
   version = '0.9.4',     
   license='MIT', 
   description = 'PyPaperBot is a Python tool for downloading scientific papers using Google Scholar, Crossref, and SciHub.',
@@ -56,9 +61,4 @@ setup(
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
   ],
-  entrypoints={ 
-       "console_scripts":[ 
-           "PyPaperBot=PyPaperBot.__main__:main", 
-       ] 
-   }, 
 )
