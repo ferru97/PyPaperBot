@@ -6,10 +6,8 @@ with open("README.md", "r") as fh:
 setup(
   name = 'PyPaperBot',        
   packages = ['PyPaperBot'],  
-  entrypoints={ 
-       "console_scripts":[ 
-           "PyPaperBot = PyPaperBot.__main__:main", 
-       ],
+  entry_points={
+    'console_scripts': ["PyPaperBot=PyPaperBot.__main__:main"],
   },
   version = '0.9.5',     
   license='MIT', 
