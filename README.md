@@ -10,7 +10,7 @@ PyPaerbot is also able to download the **bibtex** of each paper.
 - Generate Bibtex of the downloaded paper
 - Filter downloaded paper by year, journal and citations number
 
-pip insta## Installation
+## Installation
 Use `pip` to install from pypi:
 
 ```bash
