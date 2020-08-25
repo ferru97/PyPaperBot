@@ -14,7 +14,7 @@ setuptools.setup(
   author = 'Vito Ferrulli',
   author_email = 'vitof970@gmail.com',
   url = 'https://github.com/ferru97/PyPaperBot',
-  download_url = 'https://github.com/ferru97/PyPaperBot/archive/v0.9.5-beta.tar.gz',
+  download_url = 'https://github.com/ferru97/PyPaperBot/archive/v0.9.5.1-beta.tar.gz',
   keywords = ['download-papers','google-scholar', 'scihub', 'scholar', 'crossref', 'papers'],
   install_requires=[          
         'astroid==2.4.2',
