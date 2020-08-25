@@ -1,7 +1,7 @@
 from os import path
 import requests
 import time
-from HTMLparsers import getSchiHubPDF
+from .HTMLparsers import getSchiHubPDF
 import random
 
 

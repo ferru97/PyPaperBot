@@ -2,11 +2,11 @@
 
 import argparse
 import sys
-from Paper import Paper
-from PapersFilters import filterJurnals, filter_min_date, similarStrings
-from Downloader import downloadPapers
-from Scholar import ScholarPapersInfo
-from Crossref import getPapersInfoFromDOIs
+from .Paper import Paper
+from .PapersFilters import filterJurnals, filter_min_date, similarStrings
+from .Downloader import downloadPapers
+from .Scholar import ScholarPapersInfo
+from .Crossref import getPapersInfoFromDOIs
 
 
 def start(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit_type=None, filter_jurnal_file=None, restrict=None, DOIs=None):

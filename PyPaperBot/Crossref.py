@@ -1,8 +1,8 @@
 from crossref_commons.iteration import iterate_publications_as_json
 from crossref_commons.retrieval import get_entity
 from crossref_commons.types import EntityType, OutputType
-from PapersFilters import similarStrings
-from Paper import Paper
+from .PapersFilters import similarStrings
+from .Paper import Paper
 import requests
 import time
 import random

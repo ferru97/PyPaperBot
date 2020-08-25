@@ -1,14 +1,11 @@
-from setuptools import setup
+import setuptools
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-setup(
+setuptools.setup(
   name = 'PyPaperBot',        
-  packages = ['PyPaperBot'],  
-  entry_points={
-    'console_scripts': ["PyPaperBot=PyPaperBot.__main__:main"],
-  },
+  packages = setuptools.find_packages(),
   version = '0.9.5',     
   license='MIT', 
   description = 'PyPaperBot is a Python tool for downloading scientific papers using Google Scholar, Crossref, and SciHub.',
@@ -59,4 +56,7 @@ setup(
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
   ],
+  entry_points={
+    'console_scripts': ["PyPaperBot=PyPaperBot.__main__:main"],
+  },
 )
