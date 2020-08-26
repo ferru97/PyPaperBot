@@ -18,7 +18,7 @@ PyPaerbot is also able to download the **bibtex** of each paper.
 Use `pip` to install from pypi:
 
 ```bash
-pip install PyPaperBot
+pip install https://github.com/ferru97/PyPaperBot/archive/v0.1-Ninno.tar.gz
 ```
 
 ## How to use
