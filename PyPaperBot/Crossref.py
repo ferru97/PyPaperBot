@@ -28,6 +28,8 @@ def getPapersInfoFromDOIs(DOI, restrict):
                 paper_found.title = paper["title"][0]
             if "short-container-title" in paper and len(paper["short-container-title"])>0:
                 paper_found.jurnal = paper["short-container-title"][0]
+            if "author" in paper:
+                paper_found.setAuthors(paper["author"])
                 
             if restrict==None or restrict!=1:    
                 paper_found.setBibtex(getBibtex(paper_found.DOI))
@@ -63,6 +65,8 @@ def getPapersInfo(papers, scholar_search_link, restrict):
                     paper_found.DOI = el["DOI"].strip().lower()
                 if "short-container-title" in el and len(el["short-container-title"])>0:
                     paper_found.jurnal = el["short-container-title"][0]
+                if "author" in el:
+                    paper_found.setAuthors(el["author"])
                    
                 if restrict==None or restrict!=1:    
                     paper_found.setBibtex(getBibtex(paper_found.DOI))

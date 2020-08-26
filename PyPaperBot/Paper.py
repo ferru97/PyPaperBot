@@ -6,6 +6,7 @@ Created on Mon Jun  8 21:43:30 2020
 """
 import bibtexparser
 import re
+import string
 
 class Paper:
     
@@ -21,6 +22,9 @@ class Paper:
         self.cites_num = None
         self.bibtex = None
         self.DOI = None
+
+        self.sc_authors = None
+        self.pdf_name = None
              
         self.downloaded = False
         self.downloadedFrom = 0 #1-SciHub 2-scholar
@@ -28,23 +32,57 @@ class Paper:
     
 
     def getFileName(self):
-        return re.sub('[^\w\-_\. ]', '_', self.title)+".pdf"
+        if self.pdf_name!=None:
+            return self.pdf_name+".pdf"
+        else:
+            return str(self.title)+".pdf"
+
+
+    def setAuthors(self,authors):
+        self.sc_authors = []
+        for a in authors:
+            name = string.capwords(a["given"]) if "given" in a else  "None"
+            surname = string.capwords(a["family"]) if "family" in a else  "None"
+            self.sc_authors.append((name,surname))
 
     
     def setBibtex(self,bibtex):
         x=bibtexparser.loads(bibtex, parser=None)
         x=x.entries
-        
-        self.bibtex = bibtex
-        
+        self.bibtex = x[0]
         try: 
+            x[0]["author"] = x[0]["author"].replace("\\","").replace("{","").replace("}","")
+            x[0]["author"] = string.capwords(x[0]["author"]).replace("And", "and")
             self.year=x[0]["year"] if "year" in x[0] else None
             self.jurnal=x[0]["journal"].replace("\\","") if "journal" in x[0] else None
             if self.jurnal==None:
                  self.jurnal=x[0]["publisher"].replace("\\","") if "publisher" in x[0] else None
-                        
-        except:
-            pass
+            
+            #take journal initials
+            j_init=""
+            if self.jurnal != None:
+                ch_j=["and","&","of",",",'{','}']
+                jurnal_temp = self.jurnal
+                for c in ch_j:
+                    jurnal_temp = jurnal_temp.replace(c,"")
+                jurnal_temp = jurnal_temp.split()
+                
+                for i in range(0,len(jurnal_temp)):
+                    j_init = j_init + jurnal_temp[i][0].upper() #iniziali journal
+    
+            
+            authors_surnames = ""
+            if len(self.sc_authors)>0:
+                #characters to remove from author
+                for author in self.sc_authors:
+                    authors_surnames += author[1]+"_";
+                
+            
+            self.pdf_name =  authors_surnames + str(self.year) + "_" + j_init+".pdf"
+            
+            (x[0])["ID"] = self.pdf_name[:-4].replace(" ","-")
+        except Exception:
+                pass
                     
             
     def canBeDownloaded(self):
@@ -83,10 +121,36 @@ class Paper:
                 
         
     def generateBibtex(papers, path):
-        content = "" 
+        content = ""
+            
         for p in papers:
             if p.bibtex!=None:
-                content += p.bibtex+"\n"
+                
+                authors_bbx = ""
+                if p.sc_authors!=None:
+                    first = True
+                    for a in p.sc_authors:
+                        if first==False:
+                            authors_bbx += " and "
+                        else:
+                            first=False
+                        
+                    authors_bbx += a[1]+", "+a[0]
+                
+                content += "\n\n@"+p.bibtex["ENTRYTYPE"]+"{"+p.bibtex["ID"]
+                for key in p.bibtex.keys():
+                    if key!="ENTRYTYPE" and key!="ID":
+                        try:
+                          val = p.bibtex[key].encode('Windows-1252').decode('latin-1').replace("{","").replace("}","")
+                        except:
+                          print("Encoding error")
+                          val = p.bibtex[key].replace("{","").replace("}","")
+                         
+                        if key=="author":
+                            val = authors_bbx
+                        
+                        content += ",\n\t"+key+" = "+"{"+val+"}"
+                content += "\n}"
                 
         
         relace_list = ["\ast","*","#"]
@@ -96,6 +160,8 @@ class Paper:
         f = open(path, "w", encoding="latin-1", errors="ignore")
         f.write(str(content))
         f.close()
+        
+        return f
         
           
         
