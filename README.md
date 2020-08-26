@@ -1,5 +1,5 @@
 # DO NOT USE THIS VERSION AND BRANCH
-The version represented by this branch is personalized with the requirements of a specific user.
+The version represented by this branch is personalized with the requirements of a specific user and meant only for him.
 
 
 # PyPaperBot
