@@ -1,6 +1,6 @@
 # PyPaperBot
 PyPaperBot is a Python tool for **downloading scientific papers** using Google Scholar, Crossref, and SciHub.
-The tool tries to download papers from different sources such as PDF provided from Scholar, Scholar related links, and Scihub.
+The tool tries to download papers from different sources such as PDF provided by Scholar, Scholar related links, and Scihub.
 PyPaerbot is also able to download the **bibtex** of each paper.
 
 ## Features
