@@ -72,7 +72,7 @@ py -m PyPaperBot --doi="10.0086/s41037-711-0132-1" --dwn-dir="C:\User\example\pa
 ```
 
 ## Contributions
-Feel free to contribute to this project bt proposing any change, fix and enhancement on the **dev** branch
+Feel free to contribute to this project by proposing any change, fix, and enhancement on the **dev** branch
 
 ### To do
 - Tests
