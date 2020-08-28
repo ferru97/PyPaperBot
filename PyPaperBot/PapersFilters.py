@@ -47,7 +47,7 @@ def filter_min_date(list_papers,min_year):
     new_list = []
     
     for paper in list_papers:
-        if paper.sc_year!=None and int(paper.sc_year)>=min_year:
+        if paper.year!=None and int(paper.year)>=min_year:
              new_list.append(paper)
             
     return new_list
