@@ -1,3 +1,5 @@
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/ferru97)
+
 # PyPaperBot
 PyPaperBot is a Python tool for **downloading scientific papers** using Google Scholar, Crossref, and SciHub.
 The tool tries to download papers from different sources such as PDF provided by Scholar, Scholar related links, and Scihub.
@@ -81,3 +83,10 @@ Feel free to contribute to this project by proposing any change, fix, and enhanc
 
 ## Disclaimer
 This application is for educational purposes only. I do not take responsibility for what you choose to do with this application.
+
+## Donation
+If you like this project, you can give me a cup of coffee :) 
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/ferru97)
+
+
