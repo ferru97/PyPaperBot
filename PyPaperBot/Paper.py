@@ -133,9 +133,8 @@ class Paper:
                         if first==False:
                             authors_bbx += " and "
                         else:
-                            first=False
-                        
-                    authors_bbx += a[1]+", "+a[0]
+                            first=False      
+                        authors_bbx += a[1]+", "+a[0]
                 
                 content += "\n\n@"+p.bibtex["ENTRYTYPE"]+"{"+p.bibtex["ID"]
                 for key in p.bibtex.keys():
