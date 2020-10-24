@@ -6,7 +6,7 @@ import random
 
 
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'}
-SciHub_URL = "https://sci-hub.tw/" 
+SciHub_URL = "https://sci-hub.st/"
 
 def saveFile(file_name,content, paper,dwn_source):    
     if path.exists(file_name):
