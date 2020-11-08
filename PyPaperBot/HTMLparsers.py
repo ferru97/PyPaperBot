@@ -60,5 +60,15 @@ def getSchiHubPDF(html):
     
     return result
 
-        
+def SciHubUrls(html):
+    result = []
+    soup = BeautifulSoup(html, "html.parser")
+
+    for ul in soup.findAll("ul"):
+        for a in ul.findAll("a"):
+            link = a.get("href")
+            if link.startswith("https://sci-hub.") or link.startswith("http://sci-hub."):
+                result.append(link)
+    
+    return result
     
