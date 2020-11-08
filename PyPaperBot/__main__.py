@@ -51,7 +51,7 @@ def start(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limi
 
 
 def main():
-    print("PyPaperBot is a Python tool for downloading scientific papers using Google Scholar, Crossref and SciHub.\n")
+    print("""PyPaperBot is a Python tool for downloading scientific papers using Google Scholar, Crossref and SciHub.\nIf you like this project, you can give me a cup of coffee at --> https://www.paypal.com/paypalme/ferru97 <-- :)\n""")
     
     parser = argparse.ArgumentParser(description='PyPaperBot is python tool to search and dwonload scientific papers using Google Scholar, Crossref and SciHub')
     parser.add_argument('--query', type=str, default=None, help='Query to make on Google Scholar or Google Scholar page link')

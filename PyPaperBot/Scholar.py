@@ -3,10 +3,7 @@ import requests
 import functools
 from .HTMLparsers import schoolarParser
 from .Crossref import getPapersInfo
-
-
-HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'}
-SciHub_URL = "https://sci-hub.tw/"   
+from .NetInfo import NetInfo
 
 
 def waithIPchange():
@@ -17,7 +14,6 @@ def waithIPchange():
 
 def ScholarPapersInfo(query, scholar_pages, restrict):
    
-    global HEADERS
     javascript_error = "Sorry, we can't verify that you're not a robot when JavaScript is turned off"
     
     url = "https://scholar.google.com/scholar?hl=en&q="+query+"&as_vis=1&as_sdt=1,5"
@@ -29,7 +25,7 @@ def ScholarPapersInfo(query, scholar_pages, restrict):
     last_blocked = False
     i = 0
     while i < scholar_pages:
-        html = requests.get(url, headers=HEADERS)
+        html = requests.get(url, headers=NetInfo.HEADERS)
         html = html.text
         
         if javascript_error in html and last_blocked==False:
