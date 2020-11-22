@@ -45,6 +45,9 @@ def saveFile(file_name,content, paper,dwn_source):
             
     
 def downloadPapers(papers, dwnl_dir, num_limit):   
+    def URLjoin(*args):
+        return "/".join(map(lambda x: str(x).rstrip('/'), args))
+
     if NetInfo.SciHub_URL==None:
         setSciHubUrl()
 
@@ -64,10 +67,9 @@ def downloadPapers(papers, dwnl_dir, num_limit):
                     
                     dwn_source = 1 #1 scihub 2 scholar 
                     if faild==0 and p.DOI!=None:
-                        url = NetInfo.SciHub_URL + p.DOI
+                        url = URLjoin(NetInfo.SciHub_URL, p.DOI)
                     if faild==1 and p.scholar_link!=None:
-                        url = NetInfo.SciHub_URL + p.scholar_link
-                        
+                        url =  URLjoin(NetInfo.SciHub_URL, p.scholar_link)    
                     if faild==2 and p.scholar_link!=None and p.scholar_link[-3:]=="pdf":
                         url = p.scholar_link
                         dwn_source = 2
