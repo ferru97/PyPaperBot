@@ -28,11 +28,8 @@ class Paper:
     
 
     def getFileName(self):
-        try:
-            return re.sub(r'[^\w\-_\. ]', '_', str(self.title))+".pdf"
-        except:
-            return "unknown.pdf"
-            
+        return re.sub('[^\w\-_\. ]', '_', self.title)+".pdf"
+
     
     def setBibtex(self,bibtex):
         x=bibtexparser.loads(bibtex, parser=None)
