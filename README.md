@@ -34,6 +34,7 @@ PyPaperBot arguments:
 | \-\-max-dwn-cites  | Maximum number of papers to download sorted by number of citations  |int|
 | \-\-journal-filter  | CSV file path of the journal filter (More info on github)  |string|
 | \-\-restrict  | 0:Download only Bibtex - 1:Down load only papers PDF  |int|
+| \-\-scihub-mirror  | Mirror for downloading papers from sci-hub. If not set, it is selected automatically  |string|
 | \-h  | Shows the help  |--|
 
 ### Note
@@ -53,9 +54,9 @@ The argument *\-\-doi-file*  require the path of a txt file containing the list 
 If access to SciHub is blocked in your country, consider using a free VPN service like [ProtonVPN](https://protonvpn.com/)
 
 ## Example
-Download a maximum of 30 papers given a query and starting from 2018:
+Download a maximum of 30 papers given a query and starting from 2018 using the mirror https://sci-hub.do:
 ```bash
-python -m PyPaperBot --query="Machine learning" --scholar-pages=3  --min-year=2018 --dwn-dir="C:\User\example\papers"
+python -m PyPaperBot --query="Machine learning" --scholar-pages=3  --min-year=2018 --dwn-dir="C:\User\example\papers" --scihub-mirror="https://sci-hub.do"
 ```
 
 Download a paper given the DOI:
