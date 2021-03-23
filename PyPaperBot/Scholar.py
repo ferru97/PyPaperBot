@@ -30,7 +30,6 @@ def ScholarPapersInfo(query, scholar_pages, restrict):
         
         if javascript_error in html and last_blocked==False:
             waithIPchange()
-            i -= 1
             continue
         else:
             last_blocked=False
