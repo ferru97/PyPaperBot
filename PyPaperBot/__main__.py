@@ -9,7 +9,7 @@ from .Scholar import ScholarPapersInfo
 from .Crossref import getPapersInfoFromDOIs
 
 
-def start(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit_type=None, filter_jurnal_file=None, restrict=None, DOIs=None):
+def start(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit_type=None, filter_jurnal_file=None, restrict=None, DOIs=None, SciHub_URL=None):
     
     to_download = []
     if DOIs==None:
@@ -42,7 +42,7 @@ def start(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limi
         if num_limit_type!=None and num_limit_type==1:       
             to_download.sort(key=lambda x: int(x.sc_cites) if x.sc_cites!=None else 0, reverse=True)
     
-        downloadPapers(to_download, dwn_dir, num_limit)
+        downloadPapers(to_download, dwn_dir, num_limit, SciHub_URL)
 
     Paper.generateReport(to_download,dwn_dir+"result.csv")
     Paper.generateBibtex(to_download,dwn_dir+"bibtex.bib")
@@ -64,6 +64,7 @@ def main():
     parser.add_argument('--max-dwn-cites', default=None, type=int, help='Maximum number of papers to download sorted by number of citations')
     parser.add_argument('--journal-filter', default=None, type=str ,help='CSV file path of the journal filter (More info on github)')
     parser.add_argument('--restrict', default=None, type=int ,choices=[0,1], help='0:Download only Bibtex - 1:Down load only papers PDF')
+    parser.add_argument('--scihub-mirror', default=None, type=str, help='Mirror for downloading papers from sci-hub. If not set, it is selected automatically')
 
     args = parser.parse_args()
     
@@ -115,7 +116,7 @@ def main():
         max_dwn_type = 1
                 
 
-    start(args.query, args.scholar_pages, dwn_dir, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, DOIs)
+    start(args.query, args.scholar_pages, dwn_dir, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, DOIs, args.scihub_mirror)
 
 
 if __name__ == "__main__":
