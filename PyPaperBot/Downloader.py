@@ -48,9 +48,7 @@ def downloadPapers(papers, dwnl_dir, num_limit, SciHub_URL=None):
     def URLjoin(*args):
         return "/".join(map(lambda x: str(x).rstrip('/'), args))
       
-    if SciHub_URL:
-        NetInfo.SciHub_URL = SciHub_URL
-
+    NetInfo.SciHub_URL = SciHub_URL
     if NetInfo.SciHub_URL==None:
         setSciHubUrl()
     
