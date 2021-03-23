@@ -3,7 +3,6 @@ import requests
 import time
 from .HTMLparsers import getSchiHubPDF, SciHubUrls
 import random
-from urllib.parse import urljoin
 from .NetInfo import NetInfo
 
 def setSciHubUrl():
@@ -12,17 +11,19 @@ def setSciHubUrl():
     found = False
 
     for l in links:
-        r = requests.get(l, headers=NetInfo.HEADERS)
-        if r.status_code == 200:
-            found = True
-            NetInfo.SciHub_URL = l
-            break
-
+        try:
+            r = requests.get(l, headers=NetInfo.HEADERS)
+            if r.status_code == 200:
+                found = True
+                NetInfo.SciHub_URL = l
+                break
+        except:
+            pass
     if found:
         print("\nUsing {} as Sci-Hub instance".format(NetInfo.SciHub_URL))
     else:
         print("\nNo working Sci-Hub instance found!\nIf in your country Sci-Hub is not available consider using a VPN")
-        NetInfo.SciHub_URL = "https://sci-hub.st/"
+        NetInfo.SciHub_URL = "https://sci-hub.st"
 
 
 def getSaveDir(folder, fname):
@@ -44,9 +45,10 @@ def saveFile(file_name,content, paper,dwn_source):
             
     
 def downloadPapers(papers, dwnl_dir, num_limit, SciHub_URL=None):
-    if SciHub_URL:
-        NetInfo.SciHub_URL = SciHub_URL
-
+    def URLjoin(*args):
+        return "/".join(map(lambda x: str(x).rstrip('/'), args))
+      
+    NetInfo.SciHub_URL = SciHub_URL
     if NetInfo.SciHub_URL==None:
         setSciHubUrl()
     
@@ -66,10 +68,9 @@ def downloadPapers(papers, dwnl_dir, num_limit, SciHub_URL=None):
                     
                     dwn_source = 1 #1 scihub 2 scholar 
                     if faild==0 and p.DOI!=None:
-                        url = urljoin(NetInfo.SciHub_URL, p.DOI)
+                        url = URLjoin(NetInfo.SciHub_URL, p.DOI)
                     if faild==1 and p.scholar_link!=None:
-                        url = urljoin(NetInfo.SciHub_URL, p.scholar_link)
-                        
+                        url = URLjoin(NetInfo.SciHub_URL, p.scholar_link)          
                     if faild==2 and p.scholar_link!=None and p.scholar_link[-3:]=="pdf":
                         url = p.scholar_link
                         dwn_source = 2
