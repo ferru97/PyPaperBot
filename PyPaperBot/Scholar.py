@@ -12,11 +12,14 @@ def waithIPchange():
     time.sleep(30)
 
 
-def ScholarPapersInfo(query, scholar_pages, restrict):
+def ScholarPapersInfo(query, scholar_pages, restrict, min_date=None):
    
     javascript_error = "Sorry, we can't verify that you're not a robot when JavaScript is turned off"
     
     url = "https://scholar.google.com/scholar?hl=en&q="+query+"&as_vis=1&as_sdt=1,5"
+    if min_date!=None:
+        url += "&as_ylo"+min_date
+
     if len(query)>7 and (query[0:7]=="http://" or query[0:8]=="https://"):
          url = query        
         
@@ -30,7 +33,6 @@ def ScholarPapersInfo(query, scholar_pages, restrict):
         
         if javascript_error in html and last_blocked==False:
             waithIPchange()
-            i -= 1
             continue
         else:
             last_blocked=False

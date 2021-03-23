@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 setuptools.setup(
   name = 'PyPaperBot',        
   packages = setuptools.find_packages(),
-  version = '1.0.1',     
+  version = '1.0.2',     
   license='MIT', 
   description = 'PyPaperBot is a Python tool for downloading scientific papers using Google Scholar, Crossref, and SciHub.',
   long_description=long_description,
@@ -30,8 +30,8 @@ setuptools.setup(
         'isort==5.4.2',
         'lazy-object-proxy==1.4.3',
         'mccabe==0.6.1',
-        'numpy==1.19.1',
-        'pandas==1.1.1',
+        'numpy==1.20.1',
+        'pandas==1.2.2',
         'pylint==2.6.0',
         'pyparsing==2.4.7',
         'python-dateutil==2.8.1',
@@ -55,6 +55,7 @@ setuptools.setup(
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
   ],
   entry_points={
     'console_scripts': ["PyPaperBot=PyPaperBot.__main__:main"],
