@@ -118,6 +118,5 @@ def main():
 
     start(args.query, args.scholar_pages, dwn_dir, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, DOIs, args.scihub_mirror)
 
-
 if __name__ == "__main__":
     main()
