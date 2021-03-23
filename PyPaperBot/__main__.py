@@ -14,7 +14,7 @@ def start(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limi
     to_download = []
     if DOIs==None:
         print("Query: {}".format(query)) 
-        to_download = ScholarPapersInfo(query, scholar_pages, restrict)
+        to_download = ScholarPapersInfo(query, scholar_pages, restrict, min_date)
     else:
         print("Downloading papers from DOIs\n")
         num = 1
