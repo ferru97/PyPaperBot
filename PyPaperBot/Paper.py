@@ -10,13 +10,14 @@ import re
 class Paper:
     
     
-    def __init__(self,title=None, scholar_link=None, scholar_page=None, cites=None, link_pdf=None):        
+    def __init__(self,title=None, scholar_link=None, scholar_page=None, cites=None, link_pdf=None, year=None, authors=None):        
         self.title = title
         self.scholar_page = scholar_page
         self.scholar_link = scholar_link 
         self.pdf_link = link_pdf
+        self.year = year
+        self.authors = authors
         
-        self.year = None
         self.jurnal = None
         self.cites_num = None
         self.bibtex = None
@@ -37,8 +38,11 @@ class Paper:
         
         self.bibtex = bibtex
         
-        try: 
-            self.year=x[0]["year"] if "year" in x[0] else None
+        try:
+            if "year" in x[0]:
+                self.year=x[0]["year"]
+            if 'author' in x[0]:
+                self.authors = x[0]["author"]
             self.jurnal=x[0]["journal"].replace("\\","") if "journal" in x[0] else None
             if self.jurnal==None:
                  self.jurnal=x[0]["publisher"].replace("\\","") if "publisher" in x[0] else None
@@ -61,7 +65,7 @@ class Paper:
                 return str(s).replace(",", "").rstrip('\n')
             
     
-        content = "Name,Scholar Link,DOI,Bibtex,PDF Name,Year,Scholar page,Journal,Downloaded,Downloaded from"
+        content = "Name,Scholar Link,DOI,Bibtex,PDF Name,Year,Scholar page,Journal,Downloaded,Downloaded from,Authors"
         for p in papers:
             pdf_name = p.getFileName() if p.downloaded==True else ""
             bibtex_found = True if p.bibtex!=None else False
@@ -75,7 +79,8 @@ class Paper:
             content += ("\n"+strFix(p.title)+","+strFix(p.scholar_link)+","+
                         strFix(p.DOI)+","+strFix(bibtex_found)+","+ strFix(pdf_name)+
                         ","+strFix(p.year)+","+strFix(p.scholar_page)+","+
-                        strFix(p.jurnal)+","+strFix(p.downloaded)+","+strFix(dwn_from))
+                        strFix(p.jurnal)+","+strFix(p.downloaded)+","+strFix(dwn_from) +
+                        ","+strFix(p.authors))
            
         f = open(path, "w", encoding='utf-8-sig')
         f.write(content)
