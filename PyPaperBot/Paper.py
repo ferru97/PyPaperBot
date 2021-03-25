@@ -6,6 +6,7 @@ Created on Mon Jun  8 21:43:30 2020
 """
 import bibtexparser
 import re
+import csv
 
 class Paper:
     
@@ -57,34 +58,36 @@ class Paper:
         return False
             
     
-    def generateReport(papers, path):
-        def strFix(s):
-            if(len(str(s))==0):
-                return "None"
-            else:
-                return str(s).replace(",", "").rstrip('\n')
+    def generateReport(papers, path):            
+        with open(path, mode="w", encoding='utf-8', newline='', buffering=1) as w_file:
+            content = ["Name", "Scholar Link", "DOI", "Bibtex",
+                       "PDF Name", "Year", "Scholar page", "Journal",
+                       "Downloaded", "Downloaded from", "Authors"]
+            file_writer = csv.DictWriter(w_file, delimiter = ",", fieldnames=content)
+            file_writer.writeheader()
             
-    
-        content = "Name,Scholar Link,DOI,Bibtex,PDF Name,Year,Scholar page,Journal,Downloaded,Downloaded from,Authors"
-        for p in papers:
-            pdf_name = p.getFileName() if p.downloaded==True else ""
-            bibtex_found = True if p.bibtex!=None else False
+            for p in papers:
+                pdf_name = p.getFileName() if p.downloaded==True else ""
+                bibtex_found = True if p.bibtex!=None else False
 
-            dwn_from = ""
-            if p.downloadedFrom == 1:
-                dwn_from = "SciHub"
-            if p.downloadedFrom == 2:
-                dwn_from = "Scholar"
-                
-            content += ("\n"+strFix(p.title)+","+strFix(p.scholar_link)+","+
-                        strFix(p.DOI)+","+strFix(bibtex_found)+","+ strFix(pdf_name)+
-                        ","+strFix(p.year)+","+strFix(p.scholar_page)+","+
-                        strFix(p.jurnal)+","+strFix(p.downloaded)+","+strFix(dwn_from) +
-                        ","+strFix(p.authors))
-           
-        f = open(path, "w", encoding='utf-8-sig')
-        f.write(content)
-        f.close()
+                dwn_from = ""
+                if p.downloadedFrom == 1:
+                    dwn_from = "SciHub"
+                if p.downloadedFrom == 2:
+                    dwn_from = "Scholar"
+                    
+                file_writer.writerow({
+                        "Name" : p.title,
+                        "Scholar Link" : p.scholar_link,
+                        "DOI" : p.DOI,
+                        "Bibtex" : bibtex_found,
+                        "PDF Name" : pdf_name,
+                        "Year" : p.year,
+                        "Scholar page" : p.scholar_page,
+                        "Journal" : p.jurnal,
+                        "Downloaded" : p.downloaded,
+                        "Downloaded from" : dwn_from,
+                        "Authors" : p.authors})           
                 
         
     def generateBibtex(papers, path):
