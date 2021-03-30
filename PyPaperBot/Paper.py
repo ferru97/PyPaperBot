@@ -63,7 +63,7 @@ class Paper:
             content = ["Name", "Scholar Link", "DOI", "Bibtex",
                        "PDF Name", "Year", "Scholar page", "Journal",
                        "Downloaded", "Downloaded from", "Authors"]
-            file_writer = csv.DictWriter(w_file, delimiter = ",", fieldnames=content)
+            file_writer = csv.DictWriter(w_file, delimiter = ",", lineterminator=os.linesep, fieldnames=content)
             file_writer.writeheader()
             
             for p in papers:
