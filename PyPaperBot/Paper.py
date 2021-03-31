@@ -7,6 +7,7 @@ Created on Mon Jun  8 21:43:30 2020
 import bibtexparser
 import re
 import csv
+import os
 
 class Paper:
     
