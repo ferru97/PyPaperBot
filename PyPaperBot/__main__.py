@@ -29,7 +29,7 @@ def start(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limi
             i +=  1
                         
     
-    if restrict!=0:
+    if restrict!=0 and to_download:
         if filter_jurnal_file!=None:
            to_download = filterJurnals(to_download,filter_jurnal_file)
        
@@ -57,7 +57,9 @@ def main():
     parser.add_argument('--query', type=str, default=None, help='Query to make on Google Scholar or Google Scholar page link')
     parser.add_argument('--doi', type=str, default=None, help='DOI of the paper to download (this option uses only SciHub to download)')
     parser.add_argument('--doi-file', type=str, default=None, help='File .txt containing the list of paper\'s DOIs to download')
-    parser.add_argument('--scholar-pages', type=int, help='Number of Google Scholar pages to inspect. Each page has a maximum of 10 papers (required for --query)')
+    parser.add_argument('--scholar-pages', type=str, help='If given in %%d format, the number of pages to download from the beginning. '
+                                                          'If given in %%d-%%d format, the range of pages (starting from 1) to download (the end is included). '
+                                                          'Each page has a maximum of 10 papers (required for --query)')
     parser.add_argument('--dwn-dir', type=str, help='Directory path in which to save the results')
     parser.add_argument('--min-year', default=None, type=int, help='Minimal publication year of the paper to download')
     parser.add_argument('--max-dwn-year', default=None, type=int, help='Maximum number of papers to download sorted by year')
@@ -88,10 +90,25 @@ def main():
         print("Error: Only one option between '--max-dwn-year' and '--max-dwn-cites' can be used ")
         sys.exit()
         
-    if(args.query != None and args.scholar_pages==None):
-        print("Error: with --query provide also --scholar-pages")
-        sys.exit()
-         
+    if(args.query != None):
+        if args.scholar_pages:
+            try:
+                split = args.scholar_pages.split('-')
+                if len(split) == 1:
+                    scholar_pages = range(1, int(split[0]) + 1)
+                elif len(split) == 2:
+                    start_page, end_page = [int(x) for x in split]
+                    scholar_pages = range(start_page, end_page + 1)
+                else:
+                    raise ValueError
+            except Exception:
+                print(r"Error: Invalid format for --scholar-pages option. Expected: %d or %d-%d, got: " + args.scholar_pages)
+                sys.exit()
+        else:
+            print("Error: with --query provide also --scholar-pages")
+            sys.exit()
+
+
     DOIs = None    
     if args.doi_file!=None:
         DOIs = [] 
@@ -116,7 +133,7 @@ def main():
         max_dwn_type = 1
                 
 
-    start(args.query, args.scholar_pages, dwn_dir, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, DOIs, args.scihub_mirror)
+    start(args.query, scholar_pages, dwn_dir, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, DOIs, args.scihub_mirror)
 
 if __name__ == "__main__":
     main()
