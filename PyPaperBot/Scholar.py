@@ -7,38 +7,34 @@ from .NetInfo import NetInfo
 
 
 def waithIPchange():
-    input("You have been blocked, change your IP or VPN than press Enter...")
-    print("Wait 30 seconds...")
-    time.sleep(30)
+    while True:
+        inp = input('You have been blocked, try changing your IP or using a VPN. '
+              'Press Enter to continue downloading, or type "exit" to stop and exit....')
+        if inp.strip().lower() == "exit":
+            return False
+        elif not inp.strip():
+            print("Wait 30 seconds...")
+            time.sleep(30)
+            return True
 
-
-def ScholarPapersInfo(query, scholar_pages, restrict, min_date=None):
-   
+def scholar_requests(scholar_pages, url, restrict):
     javascript_error = "Sorry, we can't verify that you're not a robot when JavaScript is turned off"
-    
-    url = "https://scholar.google.com/scholar?hl=en&q="+query+"&as_vis=1&as_sdt=1,5"
-    if min_date!=None:
-        url += "&as_ylo"+min_date
-
-    if len(query)>7 and (query[0:7]=="http://" or query[0:8]=="https://"):
-         url = query        
-        
-        
     to_download = []
-    last_blocked = False
-    i = 0
-    while i < scholar_pages:
-        html = requests.get(url, headers=NetInfo.HEADERS)
-        html = html.text
-        
-        if javascript_error in html and last_blocked==False:
-            waithIPchange()
-            continue
-        else:
-            last_blocked=False
-        
+    for i in scholar_pages:
+        while True:
+            res_url = url % (10 * (i - 1))
+            html = requests.get(res_url, headers=NetInfo.HEADERS)
+            html = html.text
+            
+            if javascript_error in html:
+                is_continue = waithIPchange()
+                if not is_continue:
+                    return to_download
+            else:
+                break
+
         papers = schoolarParser(html)
-        print("\nGoogle Scholar page {} : {} papers found".format((i+1),len(papers)))
+        print("\nGoogle Scholar page {} : {} papers found".format(i,len(papers)))
         
         if(len(papers)>0):
             papersInfo = getPapersInfo(papers, url, restrict)
@@ -49,7 +45,19 @@ def ScholarPapersInfo(query, scholar_pages, restrict, min_date=None):
         else:
             print("Paper not found...")
 
-        i += 1
-        url += "&start=" + str(10*i)
+    return to_download
+
+
+
+def ScholarPapersInfo(query, scholar_pages, restrict, min_date=None):
+    
+    url = r"https://scholar.google.com/scholar?hl=en&q="+query+"&as_vis=1&as_sdt=1,5&start=%d"
+    if min_date!=None:
+        url += "&as_ylo="+str(min_date)
+
+    if len(query)>7 and (query[0:7]=="http://" or query[0:8]=="https://"):
+         url = query        
+        
+    to_download = scholar_requests(scholar_pages, url, restrict)
         
     return [item for sublist in to_download for item in sublist]

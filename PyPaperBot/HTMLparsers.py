@@ -15,6 +15,8 @@ def schoolarParser(html):
             link = None
             link_pdf = None
             cites = None
+            year = None
+            authors = None
             for h3 in element.findAll("h3", class_="gs_rt"):
                 found = False
                 for a in h3.findAll("a"): 
@@ -27,8 +29,33 @@ def schoolarParser(html):
                      cites = int(a.text[8:])
                  if "[PDF]" in a.text:
                      link_pdf = a.get("href")
+            for div in element.findAll("div", class_="gs_a"):
+                try:
+                    authors, source_and_year, source = div.text.replace('\u00A0', ' ').split(" - ")
+                except ValueError:
+                    continue
+
+                if not authors.strip().endswith('\u2026'):
+                    # There is no ellipsis at the end so we know the full list of authors
+                    authors = authors.replace(', ', ';')
+                else:
+                    authors = None
+                try:
+                    year = int(source_and_year[-4:])
+                except ValueError:
+                    continue
+                if not (1000 <= year <= 3000):
+                    year = None
+                else:
+                    year = str(year)
             if title!=None:         
-                result.append((title, link, cites, link_pdf))
+                result.append({
+                    'title' : title,
+                    'link' : link,
+                    'cites' : cites,
+                    'link_pdf' : link_pdf,
+                    'year' : year,
+                    'authors' : authors})
     return result            
         
 

@@ -64,8 +64,7 @@ def downloadPapers(papers, dwnl_dir, num_limit, SciHub_URL=None):
                                     
             faild = 0
             while p.downloaded==False and faild!=4:        
-                try:   
-                    
+                try:
                     dwn_source = 1 #1 scihub 2 scholar 
                     if faild==0 and p.DOI!=None:
                         url = URLjoin(NetInfo.SciHub_URL, p.DOI)
@@ -77,23 +76,22 @@ def downloadPapers(papers, dwnl_dir, num_limit, SciHub_URL=None):
                     if faild==3 and p.pdf_link!=None:
                         url = p.pdf_link
                         dwn_source = 2                        
-                
+                    
                     if url!="":
                         r = requests.get(url, headers=NetInfo.HEADERS)
                         content_type = r.headers.get('content-type')
-                        
+                            
                         if dwn_source==1 and 'application/pdf' not in content_type:
                             time.sleep(random.randint(1,5))
-                            
+                                
                             pdf_link = getSchiHubPDF(r.text)
                             if(pdf_link != None):
                                 r = requests.get(pdf_link, headers=NetInfo.HEADERS)
                                 content_type = r.headers.get('content-type')
-    
+        
                         if 'application/pdf' in content_type:
                             paper_files.append(saveFile(pdf_dir,r.content,p,dwn_source))
-                        
-                except:
+                except Exception:
                     pass
                 
                 faild += 1
