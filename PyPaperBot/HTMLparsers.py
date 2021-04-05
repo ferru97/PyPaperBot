@@ -32,9 +32,11 @@ def schoolarParser(html):
             for div in element.findAll("div", class_="gs_a"):
                 authors, source_and_year, source = div.text.replace('\u00A0', ' ').split(" - ")
 
-                if not authors.endswith('\u2026'):
+                if not authors.strip().endswith('\u2026'):
                     # There is no ellipsis at the end so we know the full list of authors
                     authors = authors.replace(', ', ';')
+                else:
+                    authors = None
                 try:
                     year = int(source_and_year[-4:])
                 except ValueError:

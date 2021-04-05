@@ -42,8 +42,8 @@ def getPapersInfo(papers, scholar_search_link, restrict):
     papers_return = []
     num = 1
     for paper in papers:
-        title = paper['title'].lower()
-        queries = {'query.bibliographic': title,'sort':'relevance',"select":"DOI,title,deposited,author,short-container-title"}
+        title = paper['title']
+        queries = {'query.bibliographic': title.lower(),'sort':'relevance',"select":"DOI,title,deposited,author,short-container-title"}
         
         print("Searching paper {} of {} on Crossref...".format(num,len(papers)))
         num += 1
@@ -58,7 +58,7 @@ def getPapersInfo(papers, scholar_search_link, restrict):
                     if "deposited" in el and "timestamp" in el["deposited"]:
                         el_date = int(el["deposited"]["timestamp"])
                     
-                    if (paper_found.DOI==None or el_date>found_timestamp) and "title" in el and similarStrings(title ,el["title"][0].lower())>0.75:
+                    if (paper_found.DOI==None or el_date>found_timestamp) and "title" in el and similarStrings(title.lower() ,el["title"][0].lower())>0.75:
                         found_timestamp = el_date
 
                         if "DOI" in el:
@@ -70,7 +70,8 @@ def getPapersInfo(papers, scholar_search_link, restrict):
                             paper_found.setBibtex(getBibtex(paper_found.DOI))
             
                 break
-            except ConnectionError:
+            except ConnectionError as e:
+                print("Wait 10 seconds and try again...")
                 time.sleep(10)
         
              
