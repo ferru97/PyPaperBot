@@ -18,7 +18,7 @@ def ScholarPapersInfo(query, scholar_pages, restrict, min_date=None):
     
     url = "https://scholar.google.com/scholar?hl=en&q="+query+"&as_vis=1&as_sdt=1,5"
     if min_date!=None:
-        url += "&as_ylo"+min_date
+        url += "&as_ylo="+str(min_date)
 
     if len(query)>7 and (query[0:7]=="http://" or query[0:8]=="https://"):
          url = query        

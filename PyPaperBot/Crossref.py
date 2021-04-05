@@ -42,14 +42,14 @@ def getPapersInfo(papers, scholar_search_link, restrict):
     papers_return = []
     num = 1
     for paper in papers:
-        title = paper[0].lower()
+        title = paper['title'].lower()
         queries = {'query.bibliographic': title,'sort':'relevance',"select":"DOI,title,deposited,author,short-container-title"}
         
         print("Searching paper {} of {} on Crossref...".format(num,len(papers)))
         num += 1
 
         found_timestamp = 0
-        paper_found = Paper(title,paper[1],scholar_search_link, paper[2], paper[3])
+        paper_found = Paper(title,paper['link'],scholar_search_link, paper['cites'], paper['link_pdf'], paper['year'], paper['authors'])
         for el in iterate_publications_as_json(max_results=30, queries=queries):
            
             el_date = 0
