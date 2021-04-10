@@ -11,8 +11,6 @@ idna==2.10
 isort==5.4.2
 lazy-object-proxy==1.4.3
 mccabe==0.6.1
-numpy==1.20.1
-pandas==1.2.2
 pylint==2.6.0
 pyparsing==2.4.7
 python-dateutil==2.8.1
