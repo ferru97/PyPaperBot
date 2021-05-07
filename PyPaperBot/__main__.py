@@ -107,6 +107,8 @@ def main():
         else:
             print("Error: with --query provide also --scholar-pages")
             sys.exit()
+    else:
+        scholar_pages = 0
 
 
     DOIs = None    
