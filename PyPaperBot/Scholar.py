@@ -17,12 +17,12 @@ def waithIPchange():
             time.sleep(30)
             return True
 
-def scholar_requests(scholar_pages, url, restrict):
+def scholar_requests(scholar_pages, url, restrict, scholar_results):
     javascript_error = "Sorry, we can't verify that you're not a robot when JavaScript is turned off"
     to_download = []
     for i in scholar_pages:
         while True:
-            res_url = url % (10 * (i - 1))
+            res_url = url % (scholar_results * (i - 1))
             html = requests.get(res_url, headers=NetInfo.HEADERS)
             html = html.text
             
@@ -34,7 +34,7 @@ def scholar_requests(scholar_pages, url, restrict):
                 break
 
         papers = schoolarParser(html)
-        print("\nGoogle Scholar page {} : {} papers found".format(i,len(papers)))
+        print("\nGoogle Scholar page {} : {} papers found".format(i,scholar_results))
         
         if(len(papers)>0):
             papersInfo = getPapersInfo(papers, url, restrict)
@@ -49,7 +49,7 @@ def scholar_requests(scholar_pages, url, restrict):
 
 
 
-def ScholarPapersInfo(query, scholar_pages, restrict, min_date=None):
+def ScholarPapersInfo(query, scholar_pages, restrict, min_date=None, scholar_results):
     
     url = r"https://scholar.google.com/scholar?hl=en&q="+query+"&as_vis=1&as_sdt=1,5&start=%d"
     if min_date!=None:
@@ -58,6 +58,6 @@ def ScholarPapersInfo(query, scholar_pages, restrict, min_date=None):
     if len(query)>7 and (query[0:7]=="http://" or query[0:8]=="https://"):
          url = query        
         
-    to_download = scholar_requests(scholar_pages, url, restrict)
+    to_download = scholar_requests(scholar_pages, url, restrict, scholar_results)
         
     return [item for sublist in to_download for item in sublist]

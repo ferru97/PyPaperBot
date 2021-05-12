@@ -9,12 +9,12 @@ from .Scholar import ScholarPapersInfo
 from .Crossref import getPapersInfoFromDOIs
 
 
-def start(query, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit_type=None, filter_jurnal_file=None, restrict=None, DOIs=None, SciHub_URL=None):
+def start(query, scholar_results, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit_type=None, filter_jurnal_file=None, restrict=None, DOIs=None, SciHub_URL=None):
     
     to_download = []
     if DOIs==None:
         print("Query: {}".format(query)) 
-        to_download = ScholarPapersInfo(query, scholar_pages, restrict, min_date)
+        to_download = ScholarPapersInfo(query, scholar_pages, restrict, min_date, scholar_results)
     else:
         print("Downloading papers from DOIs\n")
         num = 1
@@ -67,7 +67,7 @@ def main():
     parser.add_argument('--journal-filter', default=None, type=str ,help='CSV file path of the journal filter (More info on github)')
     parser.add_argument('--restrict', default=None, type=int ,choices=[0,1], help='0:Download only Bibtex - 1:Down load only papers PDF')
     parser.add_argument('--scihub-mirror', default=None, type=str, help='Mirror for downloading papers from sci-hub. If not set, it is selected automatically')
-
+    parser.add_argument('--scholar-results', default=10, type=int, choices=[1,2,3,4,5,6,7,8,9,10], help='Downloads the first x results in a scholar page(max=10)')
     args = parser.parse_args()
     
     if args.query==None and args.doi_file==None and args.doi==None:
@@ -78,10 +78,18 @@ def main():
         print("Error: Only one option between '--query', '--doi-file' and '--doi' can be used")
         sys.exit()
 
+    if args.scholar_results>10 or args.scholar_results<1:
+	print("Error: value of '--scholar-results' must be between 1 to 10")
+	sys.exit()
+
     if args.dwn_dir==None:
         print("Error, provide the directory path in which to save the results")
         sys.exit()
-    
+
+    if args.scholar_results!=10 and args.scholar_pages>1:
+	print("Scholar results is applicable only for --scholar-pages=1 at this moment")
+	sys.exit()
+
     dwn_dir = args.dwn_dir.replace('\\', '/')
     if dwn_dir[len(dwn_dir)-1]!='/':
         dwn_dir = dwn_dir + "/"
@@ -135,7 +143,7 @@ def main():
         max_dwn_type = 1
                 
 
-    start(args.query, scholar_pages, dwn_dir, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, DOIs, args.scihub_mirror)
+    start(args.query, scholar_results, scholar_pages, dwn_dir, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, DOIs, args.scihub_mirror)
 
 if __name__ == "__main__":
     main()
