@@ -16,10 +16,28 @@ PyPaerbot is also able to download the **bibtex** of each paper.
 
 ## Installation
 
+### For normal Users
+
 Use `pip` to install from pypi:
 
 ```bash
 pip install PyPaperBot
+```
+
+### For Termux users
+
+Since numpy cannot be directly installed....
+
+```pkg install wget
+wget https://its-pointless.github.io/setup-pointless-repo.sh
+pkg install numpy
+export CFLAGS="-Wno-deprecated-declarations -Wno-unreachable-code"
+pip install pandas
+```
+
+and
+
+```pip install PyPaperbot
 ```
 
 ## How to use
@@ -39,6 +57,7 @@ PyPaperBot arguments:
 | \-\-journal-filter | CSV file path of the journal filter (More info on github)                                | string |
 | \-\-restrict       | 0:Download only Bibtex - 1:Down load only papers PDF                                     | int    |
 | \-\-scihub-mirror  | Mirror for downloading papers from sci-hub. If not set, it is selected automatically     | string |
+| \-\-scholar-results| Number of scholar results to bedownloaded when \-\-scholar-pages=1                       | int    |
 | \-h                | Shows the help                                                                           | --     |
 
 ### Note
@@ -56,7 +75,7 @@ The argument *\-\-journal-filter*  require the path of a CSV containing a list o
 
 The argument *\-\-doi-file*  require the path of a txt file containing the list of paper's DOIs to download organized with one DOI per line [Example](https://github.com/ferru97/PyPaperBot/blob/master/file_examples/papers.txt)
 
-## SchiHub access
+## SciHub access
 
 If access to SciHub is blocked in your country, consider using a free VPN service like [ProtonVPN](https://protonvpn.com/)
 
@@ -91,6 +110,8 @@ If it doesn't work, try to use *py* instead of *python* i.e.
 ```bash
 py -m PyPaperBot --doi="10.0086/s41037-711-0132-1" --dwn-dir="C:\User\example\papers"`
 ```
+
+In termux, you can directly use ```PyPaperBot``` followed by arguments...
 
 ## Contributions
 
