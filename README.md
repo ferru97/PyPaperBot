@@ -28,7 +28,8 @@ pip install PyPaperBot
 
 Since numpy cannot be directly installed....
 
-```pkg install wget
+```
+pkg install wget
 wget https://its-pointless.github.io/setup-pointless-repo.sh
 pkg install numpy
 export CFLAGS="-Wno-deprecated-declarations -Wno-unreachable-code"
@@ -37,7 +38,8 @@ pip install pandas
 
 and
 
-```pip install PyPaperbot
+```
+pip install PyPaperbot
 ```
 
 ## How to use
