@@ -7,9 +7,12 @@ from .PapersFilters import filterJurnals, filter_min_date, similarStrings
 from .Downloader import downloadPapers
 from .Scholar import ScholarPapersInfo
 from .Crossref import getPapersInfoFromDOIs
+from .proxy import proxy
 
+def start(query, scholar_results, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit_type=None, filter_jurnal_file=None, restrict=None, DOIs=None, SciHub_URL=None, host=None, port=None):
 
-def start(query, scholar_results, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit_type=None, filter_jurnal_file=None, restrict=None, DOIs=None, SciHub_URL=None):
+    if host!=None:
+        proxy(host, port)
 
     to_download = []
     if DOIs==None:
@@ -44,10 +47,9 @@ def start(query, scholar_results, scholar_pages, dwn_dir, min_date=None, num_lim
 
         downloadPapers(to_download, dwn_dir, num_limit, SciHub_URL)
 
+
     Paper.generateReport(to_download,dwn_dir+"result.csv")
     Paper.generateBibtex(to_download,dwn_dir+"bibtex.bib")
-
-
 
 
 def main():
@@ -68,10 +70,16 @@ def main():
     parser.add_argument('--restrict', default=None, type=int ,choices=[0,1], help='0:Download only Bibtex - 1:Down load only papers PDF')
     parser.add_argument('--scihub-mirror', default=None, type=str, help='Mirror for downloading papers from sci-hub. If not set, it is selected automatically')
     parser.add_argument('--scholar-results', default=10, type=int, choices=[1,2,3,4,5,6,7,8,9,10], help='Downloads the first x results in a scholar page(max=10)')
+    parser.add_argument('--host', default=None, type=str, help='Use proxy host')
+    parser.add_argument('--port', default=None, type=int, help='Use proxy port')
     args = parser.parse_args()
 
     if args.query==None and args.doi_file==None and args.doi==None:
         print("Error, provide at least one of the following arguments: --query or --file")
+        sys.exit()
+
+    if args.port!=None and args.host==None:
+        print("Error, Host not provided")
         sys.exit()
 
     if (args.query!=None and args.doi_file!=None) or (args.query!=None and args.doi!=None) or (args.doi!=None and args.doi_file!=None):
@@ -79,16 +87,16 @@ def main():
         sys.exit()
 
     if args.scholar_results>10 or args.scholar_results<1:
-	print("Error: value of '--scholar-results' must be between 1 to 10")
-	sys.exit()
+        print("Error: value of '--scholar-results' must be between 1 to 10")
+        sys.exit()
 
     if args.dwn_dir==None:
         print("Error, provide the directory path in which to save the results")
         sys.exit()
 
     if args.scholar_results!=10 and args.scholar_pages>1:
-	print("Scholar results is applicable only for --scholar-pages=1 at this moment")
-	sys.exit()
+        print("Scholar results is applicable only for --scholar-pages=1 at this moment")
+        sys.exit()
 
     dwn_dir = args.dwn_dir.replace('\\', '/')
     if dwn_dir[len(dwn_dir)-1]!='/':
@@ -143,7 +151,7 @@ def main():
         max_dwn_type = 1
 
 
-    start(args.query, scholar_results, scholar_pages, dwn_dir, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, DOIs, args.scihub_mirror)
+    start(args.query, scholar_results, scholar_pages, dwn_dir, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, DOIs, args.scihub_mirror, host, port)
 
 if __name__ == "__main__":
     main()
