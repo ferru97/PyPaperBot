@@ -10,10 +10,10 @@ from .Crossref import getPapersInfoFromDOIs
 
 
 def start(query, scholar_results, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit_type=None, filter_jurnal_file=None, restrict=None, DOIs=None, SciHub_URL=None):
-    
+
     to_download = []
     if DOIs==None:
-        print("Query: {}".format(query)) 
+        print("Query: {}".format(query))
         to_download = ScholarPapersInfo(query, scholar_pages, restrict, min_date, scholar_results)
     else:
         print("Downloading papers from DOIs\n")
@@ -27,32 +27,32 @@ def start(query, scholar_results, scholar_pages, dwn_dir, min_date=None, num_lim
 
             num += 1
             i +=  1
-                        
-    
+
+
     if restrict!=0 and to_download:
         if filter_jurnal_file!=None:
            to_download = filterJurnals(to_download,filter_jurnal_file)
-       
+
         if min_date!=None:
-            to_download = filter_min_date(to_download,min_date)  
-         
-        if num_limit_type!=None and num_limit_type==0:       
+            to_download = filter_min_date(to_download,min_date)
+
+        if num_limit_type!=None and num_limit_type==0:
             to_download.sort(key=lambda x: int(x.sc_year) if x.sc_year!=None else 0, reverse=True)
-            
-        if num_limit_type!=None and num_limit_type==1:       
+
+        if num_limit_type!=None and num_limit_type==1:
             to_download.sort(key=lambda x: int(x.sc_cites) if x.sc_cites!=None else 0, reverse=True)
-    
+
         downloadPapers(to_download, dwn_dir, num_limit, SciHub_URL)
 
     Paper.generateReport(to_download,dwn_dir+"result.csv")
     Paper.generateBibtex(to_download,dwn_dir+"bibtex.bib")
-    
+
 
 
 
 def main():
     print("""PyPaperBot is a Python tool for downloading scientific papers using Google Scholar, Crossref and SciHub.\nIf you like this project, you can give me a cup of coffee at --> https://www.paypal.com/paypalme/ferru97 <-- :)\n""")
-    
+
     parser = argparse.ArgumentParser(description='PyPaperBot is python tool to search and dwonload scientific papers using Google Scholar, Crossref and SciHub')
     parser.add_argument('--query', type=str, default=None, help='Query to make on Google Scholar or Google Scholar page link')
     parser.add_argument('--doi', type=str, default=None, help='DOI of the paper to download (this option uses only SciHub to download)')
@@ -69,11 +69,11 @@ def main():
     parser.add_argument('--scihub-mirror', default=None, type=str, help='Mirror for downloading papers from sci-hub. If not set, it is selected automatically')
     parser.add_argument('--scholar-results', default=10, type=int, choices=[1,2,3,4,5,6,7,8,9,10], help='Downloads the first x results in a scholar page(max=10)')
     args = parser.parse_args()
-    
+
     if args.query==None and args.doi_file==None and args.doi==None:
         print("Error, provide at least one of the following arguments: --query or --file")
         sys.exit()
-        
+
     if (args.query!=None and args.doi_file!=None) or (args.query!=None and args.doi!=None) or (args.doi!=None and args.doi_file!=None):
         print("Error: Only one option between '--query', '--doi-file' and '--doi' can be used")
         sys.exit()
@@ -93,11 +93,11 @@ def main():
     dwn_dir = args.dwn_dir.replace('\\', '/')
     if dwn_dir[len(dwn_dir)-1]!='/':
         dwn_dir = dwn_dir + "/"
-    
+
     if args.max_dwn_year != None and args.max_dwn_cites != None:
         print("Error: Only one option between '--max-dwn-year' and '--max-dwn-cites' can be used ")
         sys.exit()
-        
+
     if(args.query != None):
         if args.scholar_pages:
             try:
@@ -119,20 +119,20 @@ def main():
         scholar_pages = 0
 
 
-    DOIs = None    
+    DOIs = None
     if args.doi_file!=None:
-        DOIs = [] 
+        DOIs = []
         f = args.doi_file.replace('\\', '/')
         with open(f) as file_in:
             for line in file_in:
                 if line[len(line)-1]=='\n':
                     DOIs.append(line[:-1])
                 else:
-                    DOIs.append(line)   
+                    DOIs.append(line)
 
-    if args.doi!=None: 
-        DOIs = [args.doi]     
-    
+    if args.doi!=None:
+        DOIs = [args.doi]
+
     max_dwn = None
     max_dwn_type = None
     if args.max_dwn_year != None:
@@ -141,7 +141,7 @@ def main():
     if args.max_dwn_cites != None:
         max_dwn = args.max_dwn_cites
         max_dwn_type = 1
-                
+
 
     start(args.query, scholar_results, scholar_pages, dwn_dir, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, DOIs, args.scihub_mirror)
 
