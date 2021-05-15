@@ -99,3 +99,14 @@ def SciHubUrls(html):
 
     return result
 
+def LibgenUrls(html):
+    result = []
+    soup = BeautifulSoup(html, "html.parser")
+
+    for ul in soup.findall("ul"):
+        for a in ul.findAll("a"):
+            link = a.get("href")
+            if link.startswith("https://libgen.") or link.startswith("http://libgen"):
+                result.append(link)
+
+    return result

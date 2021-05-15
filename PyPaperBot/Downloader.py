@@ -1,7 +1,7 @@
 from os import path
 import requests
 import time
-from .HTMLparsers import getSchiHubPDF, SciHubUrls
+from .HTMLparsers import getSchiHubPDF, SciHubUrls, LibgenUrls
 import random
 from .NetInfo import NetInfo
 
@@ -25,6 +25,18 @@ def setSciHubUrl():
         print("\nNo working Sci-Hub instance found!\nIf in your country Sci-Hub is not available consider using a VPN")
         NetInfo.SciHub_URL = "https://sci-hub.st"
 
+def setLibgenUrl():
+    r = requests.get(NetInfo.Libgen_URLs_repo, headers=NetInfo.HEADERS)
+    links = LibgenURLs(r.text)
+    found = False
+
+    for l in links:
+        try:
+            r = requests.get(l, headers=NetInfo.HEADERS)
+            if r.status_code == 200:
+                found =True
+                NetInfo.Libgen_URL = 1
+                break
 
 def getSaveDir(folder, fname):
     dir_ = path.join(folder, fname)
