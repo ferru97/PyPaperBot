@@ -1,8 +1,14 @@
-import proxy
+import socket
+import pyChainedProxy as socks
+from .Downloader import downloadPapers
 
-def proxy(host, port):
-    if __name__ == '__main__':
-        proxy.main([
-	'--hostname', host,
-	'--port', port
-    ])
+def proxy(pchain):
+
+    chain = pchain
+
+    socks.setdefaultproxy()
+    for hop in chain:
+        socks.adddefaultproxy(*socks.parseproxy(hop))
+
+    rawsocket = socket.socket
+    socket.socket = socks.socksocket

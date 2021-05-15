@@ -32,7 +32,7 @@ setuptools.setup(
         'mccabe>=0.6.1',
         'numpy',
         'pandas',
-        'proxy.py>=2.0.0',
+        'pyChainedProxy>=1.1',
         'pylint>=2.6.0',
         'pyparsing>=2.4.7',
         'python-dateutil>=2.8.1',
