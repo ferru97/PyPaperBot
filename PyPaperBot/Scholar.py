@@ -17,7 +17,7 @@ def waithIPchange():
             time.sleep(30)
             return True
 
-def scholar_requests(scholar_pages, url, restrict, scholar_results):
+def scholar_requests(scholar_pages, url, restrict, scholar_results=10):
     javascript_error = "Sorry, we can't verify that you're not a robot when JavaScript is turned off"
     to_download = []
     for i in scholar_pages:
@@ -49,7 +49,7 @@ def scholar_requests(scholar_pages, url, restrict, scholar_results):
 
 
 
-def ScholarPapersInfo(query, scholar_pages, restrict, min_date=None, scholar_results):
+def ScholarPapersInfo(query, scholar_pages, restrict, min_date=None, scholar_results=10):
 
     url = r"https://scholar.google.com/scholar?hl=en&q="+query+"&as_vis=1&as_sdt=1,5&start=%d"
     if min_date!=None:
