@@ -9,10 +9,7 @@ from .Scholar import ScholarPapersInfo
 from .Crossref import getPapersInfoFromDOIs
 from .proxy import proxy
 
-def start(query, scholar_results, scholar_pages, dwn_dir, min_date=None, num_limit=None, num_limit_type=None, filter_jurnal_file=None, restrict=None, DOIs=None, SciHub_URL=None, host=None, port=None):
-
-    if host!=None:
-        proxy(host, port)
+def start(query, scholar_results, scholar_pages, dwn_dir, proxy, min_date=None, num_limit=None, num_limit_type=None, filter_jurnal_file=None, restrict=None, DOIs=None, SciHub_URL=None):
 
     to_download = []
     if DOIs==None:
@@ -146,7 +143,7 @@ def main():
         max_dwn_type = 1
 
 
-    start(args.query, args.scholar_results, scholar_pages, dwn_dir, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, DOIs, args.scihub_mirror, host, port)
+    start(args.query, args.scholar_results, scholar_pages, dwn_dir, proxy, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, DOIs, args.scihub_mirror)
 
 if __name__ == "__main__":
     main()

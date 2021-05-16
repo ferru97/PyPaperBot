@@ -43,7 +43,7 @@ def saveFile(file_name,content, paper,dwn_source):
     paper.downloaded = True
     paper.downloadedFrom = dwn_source
 
-def downloadPapers(papers, dwnl_dir, num_limit, SciHub_URL=None):
+def downloadPapers(papers, dwnl_dir, num_limit, scholar_results, SciHub_URL=None):
     def URLjoin(*args):
         return "/".join(map(lambda x: str(x).rstrip('/'), args))
 
@@ -56,7 +56,7 @@ def downloadPapers(papers, dwnl_dir, num_limit, SciHub_URL=None):
     paper_files = []
     for p in papers:
         if p.canBeDownloaded() and (num_limit==None or num_downloaded<num_limit):
-            print("Download {} of {} -> {}".format(paper_number, len(papers), p.title))
+            print("Download {} of {} -> {}".format(paper_number, scholar_results, p.title))
             paper_number += 1
 
             pdf_dir = getSaveDir(dwnl_dir, p.getFileName())
