@@ -60,6 +60,7 @@ PyPaperBot arguments:
 | \-\-restrict       | 0:Download only Bibtex - 1:Down load only papers PDF                                     | int    |
 | \-\-scihub-mirror  | Mirror for downloading papers from sci-hub. If not set, it is selected automatically     | string |
 | \-\-scholar-results| Number of scholar results to bedownloaded when \-\-scholar-pages=1                       | int    |
+| \-\-proxy          | Proxies to be used. Please specify the protocol to be used.                              | string |
 | \-h                | Shows the help                                                                           | --     |
 
 ### Note
@@ -77,9 +78,12 @@ The argument *\-\-journal-filter*  require the path of a CSV containing a list o
 
 The argument *\-\-doi-file*  require the path of a txt file containing the list of paper's DOIs to download organized with one DOI per line [Example](https://github.com/ferru97/PyPaperBot/blob/master/file_examples/papers.txt)
 
+Use the --proxy argument at the end of all other arguments and specify the protocol to be used. See the examples to understand how to use the option.
+
 ## SciHub access
 
-If access to SciHub is blocked in your country, consider using a free VPN service like [ProtonVPN](https://protonvpn.com/)
+If access to SciHub is blocked in your country, consider using a free VPN service like [ProtonVPN](https://protonvpn.com/) 
+Also, you can use proxy option above.
 
 ## Example
 
@@ -111,6 +115,12 @@ If it doesn't work, try to use *py* instead of *python* i.e.
 
 ```bash
 py -m PyPaperBot --doi="10.0086/s41037-711-0132-1" --dwn-dir="C:\User\example\papers"`
+```
+
+Using a proxy
+
+```
+python -m PyPaperBot --query=rheumatoid+arthritis --scholar-pages=1 --scholar-results=7 --dwn-dir=/download --proxy http://1.1.1.1::8080 https://8.8.8.8::8080
 ```
 
 In termux, you can directly use ```PyPaperBot``` followed by arguments...
