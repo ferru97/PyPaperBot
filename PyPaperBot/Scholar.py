@@ -17,15 +17,15 @@ def waithIPchange():
             time.sleep(30)
             return True
 
-def scholar_requests(scholar_pages, url, restrict):
+def scholar_requests(scholar_pages, url, restrict, scholar_results=10):
     javascript_error = "Sorry, we can't verify that you're not a robot when JavaScript is turned off"
     to_download = []
     for i in scholar_pages:
         while True:
-            res_url = url % (10 * (i - 1))
+            res_url = url % (scholar_results * (i - 1))
             html = requests.get(res_url, headers=NetInfo.HEADERS)
             html = html.text
-            
+
             if javascript_error in html:
                 is_continue = waithIPchange()
                 if not is_continue:
@@ -34,13 +34,13 @@ def scholar_requests(scholar_pages, url, restrict):
                 break
 
         papers = schoolarParser(html)
-        print("\nGoogle Scholar page {} : {} papers found".format(i,len(papers)))
-        
+        print("\nGoogle Scholar page {} : {} papers found".format(i,scholar_results))
+
         if(len(papers)>0):
-            papersInfo = getPapersInfo(papers, url, restrict)
+            papersInfo = getPapersInfo(papers, url, restrict, scholar_results)
             info_valids = functools.reduce(lambda a,b : a+1 if b.DOI!=None else a, papersInfo, 0)
             print("Papers found on Crossref: {}/{}\n".format(info_valids,len(papers)))
-            
+
             to_download.append(papersInfo)
         else:
             print("Paper not found...")
@@ -49,15 +49,15 @@ def scholar_requests(scholar_pages, url, restrict):
 
 
 
-def ScholarPapersInfo(query, scholar_pages, restrict, min_date=None):
-    
+def ScholarPapersInfo(query, scholar_pages, restrict, min_date=None, scholar_results=10):
+
     url = r"https://scholar.google.com/scholar?hl=en&q="+query+"&as_vis=1&as_sdt=1,5&start=%d"
     if min_date!=None:
         url += "&as_ylo="+str(min_date)
 
     if len(query)>7 and (query[0:7]=="http://" or query[0:8]=="https://"):
-         url = query        
-        
-    to_download = scholar_requests(scholar_pages, url, restrict)
-        
+         url = query
+
+    to_download = scholar_requests(scholar_pages, url, restrict, scholar_results)
+
     return [item for sublist in to_download for item in sublist]
