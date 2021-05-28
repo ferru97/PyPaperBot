@@ -150,7 +150,7 @@ class UI:
 
 
 curr_path = pathlib.Path(__file__).parent.absolute()
-help_icon = os.path.join(curr_path, "img/info_icon.pgm")
+help_icon = os.path.join(curr_path, "img/info_icon.png")
 image_logo = os.path.join(curr_path, "img/logo.png")
 donate_img = os.path.join(curr_path, "img/donate.gif")
 
