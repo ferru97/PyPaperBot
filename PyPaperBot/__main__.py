@@ -66,7 +66,7 @@ def main():
     parser.add_argument('--journal-filter', default=None, type=str ,help='CSV file path of the journal filter (More info on github)')
     parser.add_argument('--restrict', default=None, type=int ,choices=[0,1], help='0:Download only Bibtex - 1:Down load only papers PDF')
     parser.add_argument('--scihub-mirror', default=None, type=str, help='Mirror for downloading papers from sci-hub. If not set, it is selected automatically')
-    parser.add_argument('--scholar-results', default=10, type=int, choices=[1,2,3,4,5,6,7,8,9,10], help='Downloads the first x results in a scholar page(max=10)')
+    parser.add_argument('--scholar-results', default=10, type=int, choices=[1,2,3,4,5,6,7,8,9,10], help='Downloads the first x results for each scholar page(default/max=10)')
     parser.add_argument('--proxy', nargs='+', default=[], help='Use proxychains, provide a seperated list of proxies to use.Please specify the argument al the end')
     args = parser.parse_args()
 
@@ -146,3 +146,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    print("""Work completed!\nIf you like this project, you can offer me a cup of coffee at --> https://www.paypal.com/paypalme/ferru97 <-- :)\n""")

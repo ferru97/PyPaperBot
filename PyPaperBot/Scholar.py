@@ -34,6 +34,9 @@ def scholar_requests(scholar_pages, url, restrict, scholar_results=10):
                 break
 
         papers = schoolarParser(html)
+        if len(papers)>scholar_results:
+            papers = papers[0:scholar_results]
+            
         print("\nGoogle Scholar page {} : {} papers found".format(i,scholar_results))
 
         if(len(papers)>0):

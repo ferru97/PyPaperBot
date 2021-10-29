@@ -24,6 +24,8 @@ Use `pip` to install from pypi:
 pip install PyPaperBot
 ```
 
+If on windows you get an error saying *error: Microsoft Visual C++ 14.0 is required..* try to install [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/it/visual-cpp-build-tools/) or [Visual Studio](https://visualstudio.microsoft.com/it/downloads/)
+
 ### For Termux users
 
 Since numpy cannot be directly installed....
