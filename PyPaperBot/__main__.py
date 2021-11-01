@@ -37,10 +37,10 @@ def start(query, scholar_results, scholar_pages, dwn_dir, proxy, min_date=None, 
             to_download = filter_min_date(to_download,min_date)
 
         if num_limit_type!=None and num_limit_type==0:
-            to_download.sort(key=lambda x: int(x.sc_year) if x.sc_year!=None else 0, reverse=True)
+            to_download.sort(key=lambda x: int(x.year) if x.year!=None else 0, reverse=True)
 
         if num_limit_type!=None and num_limit_type==1:
-            to_download.sort(key=lambda x: int(x.sc_cites) if x.sc_cites!=None else 0, reverse=True)
+            to_download.sort(key=lambda x: int(x.cites_num) if x.cites_num!=None else 0, reverse=True)
 
         downloadPapers(to_download, dwn_dir, num_limit, SciHub_URL)
 
@@ -146,4 +146,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    print("""Work completed!\nIf you like this project, you can offer me a cup of coffee at --> https://www.paypal.com/paypalme/ferru97 <-- :)\n""")
+    print("""\nWork completed!\nIf you like this project, you can offer me a cup of coffee at --> https://www.paypal.com/paypalme/ferru97 <-- :)\n""")

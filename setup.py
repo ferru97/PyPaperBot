@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 setuptools.setup(
   name = 'PyPaperBot',        
   packages = setuptools.find_packages(),
-  version = '1.2.1',     
+  version = '1.2.2',     
   license='MIT', 
   description = 'PyPaperBot is a Python tool for downloading scientific papers using Google Scholar, Crossref, and SciHub.',
   long_description=long_description,
@@ -14,7 +14,7 @@ setuptools.setup(
   author = 'Vito Ferrulli',
   author_email = 'vitof970@gmail.com',
   url = 'https://github.com/ferru97/PyPaperBot',
-  download_url = 'https://github.com/ferru97/PyPaperBot/archive/v1.2.1.tar.gz',
+  download_url = 'https://github.com/ferru97/PyPaperBot/archive/v1.2.2.tar.gz',
   keywords = ['download-papers','google-scholar', 'scihub', 'scholar', 'crossref', 'papers'],
   install_requires=[          
         'astroid>=2.4.2,<=2.5',
