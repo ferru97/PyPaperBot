@@ -68,11 +68,19 @@ def main():
     parser.add_argument('--scihub-mirror', default=None, type=str, help='Mirror for downloading papers from sci-hub. If not set, it is selected automatically')
     parser.add_argument('--scholar-results', default=10, type=int, choices=[1,2,3,4,5,6,7,8,9,10], help='Downloads the first x results for each scholar page(default/max=10)')
     parser.add_argument('--proxy', nargs='+', default=[], help='Use proxychains, provide a seperated list of proxies to use.Please specify the argument al the end')
+    parser.add_argument('--single-proxy', type=str, default=None, help='Use a single proxy. Recommended if using --proxy gives errors')
     args = parser.parse_args()
 
-    pchain = []
-    pchain = args.proxy
-    proxy(pchain)
+    if(args.single_proxy!=None):
+        os.environ['http_proxy'] = args.single_proxy 
+        os.environ['HTTP_PROXY'] = args.single_proxy
+        os.environ['https_proxy'] = args.single_proxy
+        os.environ['HTTPS_PROXY'] = args.single_proxy
+        print("Using proxy: ", args.single_proxy)
+    else:
+        pchain = []
+        pchain = args.proxy
+        proxy(pchain)
 
     if args.query==None and args.doi_file==None and args.doi==None:
         print("Error, provide at least one of the following arguments: --query or --file")
