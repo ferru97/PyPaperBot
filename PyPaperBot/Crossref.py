@@ -12,9 +12,12 @@ def getBibtex(DOI):
     try:
         url_bibtex = "http://api.crossref.org/works/" + DOI + "/transform/application/x-bibtex"
         x = requests.get(url_bibtex)
+        if x.status_code == 404:
+            return ""
         return str(x.text)
-    except:
-        return None
+    except Exception as e:
+        print(e)
+        return ""
 
 
 def getPapersInfoFromDOIs(DOI, restrict):

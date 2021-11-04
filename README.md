@@ -63,6 +63,7 @@ PyPaperBot arguments:
 | \-\-scihub-mirror  | Mirror for downloading papers from sci-hub. If not set, it is selected automatically     | string |
 | \-\-scholar-results| Number of scholar results to bedownloaded when \-\-scholar-pages=1                       | int    |
 | \-\-proxy          | Proxies to be used. Please specify the protocol to be used.                              | string |
+| \-\-single-proxy   | Use a single proxy. Recommended if using --proxy gives errors.                           | string |
 | \-h                | Shows the help                                                                           | --     |
 
 ### Note
