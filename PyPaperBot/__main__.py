@@ -2,6 +2,7 @@
 
 import argparse
 import sys
+import os
 from .Paper import Paper
 from .PapersFilters import filterJurnals, filter_min_date, similarStrings
 from .Downloader import downloadPapers
