@@ -26,7 +26,7 @@ def getPapersInfoFromDOIs(DOI, restrict):
 
     try:
         paper = get_entity(DOI, EntityType.PUBLICATION, OutputType.JSON)
-        if paper!=None and len(paper)>0:
+        if paper is not None and len(paper) > 0:
             if "title" in paper:
                 paper_found.title = paper["title"][0]
             if "short-container-title" in paper and len(paper["short-container-title"]) > 0:
@@ -35,7 +35,7 @@ def getPapersInfoFromDOIs(DOI, restrict):
             if restrict is None or restrict != 1:
                 paper_found.setBibtex(getBibtex(paper_found.DOI))
     except:
-        print("Paper not found "+DOI)
+        print("Paper not found " + DOI)
 
     return paper_found
 

@@ -26,10 +26,10 @@ def filterJurnals(papers,csv_path):
     include_list = list(df["include_list"])
 
     for p in papers:
-        good = False if (p.jurnal!=None and len(p.jurnal)>0) else True
-        if p.jurnal!=None:
-            for jurnal,include in zip(journal_list,include_list):
-                if include==1 and similarStrings(p.jurnal,jurnal)>=0.8:
+        good = not (p.jurnal is not None and len(p.jurnal) > 0)
+        if p.jurnal is not None:
+            for jurnal, include in zip(journal_list, include_list):
+                if include == 1 and similarStrings(p.jurnal, jurnal) >= 0.8:
                     good = True
 
         if good == True:
@@ -49,7 +49,7 @@ def filter_min_date(list_papers,min_year):
     new_list = []
 
     for paper in list_papers:
-        if paper.year!=None and int(paper.year)>=min_year:
-             new_list.append(paper)
+        if paper.year is not None and int(paper.year) >= min_year:
+            new_list.append(paper)
 
     return new_list

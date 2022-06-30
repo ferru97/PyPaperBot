@@ -42,8 +42,8 @@ def scholar_requests(scholar_pages, url, restrict, scholar_results=10):
 
         if len(papers) > 0:
             papersInfo = getPapersInfo(papers, url, restrict, scholar_results)
-            info_valids = functools.reduce(lambda a,b : a+1 if b.DOI!=None else a, papersInfo, 0)
-            print("Papers found on Crossref: {}/{}\n".format(info_valids,len(papers)))
+            info_valids = functools.reduce(lambda a, b: a + 1 if b.DOI is not None else a, papersInfo, 0)
+            print("Papers found on Crossref: {}/{}\n".format(info_valids, len(papers)))
 
             to_download.append(papersInfo)
         else:
@@ -53,10 +53,9 @@ def scholar_requests(scholar_pages, url, restrict, scholar_results=10):
 
 
 def ScholarPapersInfo(query, scholar_pages, restrict, min_date=None, scholar_results=10):
-
-    url = r"https://scholar.google.com/scholar?hl=en&q="+query+"&as_vis=1&as_sdt=1,5&start=%d"
-    if min_date!=None:
-        url += "&as_ylo="+str(min_date)
+    url = r"https://scholar.google.com/scholar?hl=en&q=" + query + "&as_vis=1&as_sdt=1,5&start=%d"
+    if min_date is not None:
+        url += f"&as_ylo={min_date}"
 
     if len(query) > 7 and (query.startswith("http://") or query.startswith("https://")):
         url = query

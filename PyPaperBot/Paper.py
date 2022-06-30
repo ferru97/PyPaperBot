@@ -27,11 +27,11 @@ class Paper:
         self.DOI = None
 
         self.downloaded = False
-        self.downloadedFrom = 0 #1-SciHub 2-scholar
+        self.downloadedFrom = 0  # 1-SciHub 2-scholar
 
     def getFileName(self):
         try:
-            return re.sub('[^\w\-_\. ]', '_', self.title) + ".pdf"
+            return re.sub(r'[^\w\-_. ]', '_', self.title) + ".pdf"
         except:
             return "none.pdf"
 
@@ -53,10 +53,7 @@ class Paper:
             pass
 
     def canBeDownloaded(self):
-        if self.DOI!=None or self.scholar_link!=None:
-            return True
-        return False
-
+        return self.DOI is not None or self.scholar_link is not None
 
     def generateReport(papers, path):
         with open(path, mode="w", encoding='utf-8', newline='', buffering=1) as w_file:
@@ -67,8 +64,8 @@ class Paper:
             file_writer.writeheader()
 
             for p in papers:
-                pdf_name = p.getFileName() if p.downloaded==True else ""
-                bibtex_found = True if p.bibtex!=None else False
+                pdf_name = p.getFileName() if p.downloaded else ""
+                bibtex_found = p.bibtex is not None
 
                 dwn_from = ""
                 if p.downloadedFrom == 1:

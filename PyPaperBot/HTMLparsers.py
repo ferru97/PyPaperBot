@@ -49,7 +49,7 @@ def schoolarParser(html):
                     year = None
                 else:
                     year = str(year)
-            if title!=None:
+            if title is not None:
                 result.append({
                     'title': title,
                     'link': link,
@@ -75,14 +75,14 @@ def getSchiHubPDF(html):
     iframe = soup.find(id='pdf')
     plugin = soup.find(id='plugin')
 
-    if iframe!=None:
+    if iframe is not None:
         result = iframe.get("src")
 
-    if plugin!=None and result==None:
+    if plugin is not None and result is None:
         result = plugin.get("src")
 
-    if result!=None and result[0]!="h":
-        result = "https:"+result
+    if result is not None and result[0] != "h":
+        result = "https:" + result
 
     return result
 
