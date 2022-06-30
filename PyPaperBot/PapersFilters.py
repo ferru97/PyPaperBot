@@ -32,7 +32,7 @@ def filterJurnals(papers,csv_path):
                 if include == 1 and similarStrings(p.jurnal, jurnal) >= 0.8:
                     good = True
 
-        if good == True:
+        if good:
             result.append(p)
 
     return result
