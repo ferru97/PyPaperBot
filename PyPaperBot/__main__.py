@@ -146,7 +146,7 @@ def main():
         f = args.doi_file.replace('\\', '/')
         with open(f) as file_in:
             for line in file_in:
-                if line[len(line)-1]=='\n':
+                if line[-1] == '\n':
                     DOIs.append(line[:-1])
                 else:
                     DOIs.append(line)

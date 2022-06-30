@@ -11,7 +11,7 @@ def schoolarParser(html):
     result = []
     soup = BeautifulSoup(html, "html.parser")
     for element in soup.findAll("div", class_="gs_r gs_or gs_scl"):
-        if isBook(element) == False:
+        if not isBook(element):
             title = None
             link = None
             link_pdf = None
@@ -21,7 +21,7 @@ def schoolarParser(html):
             for h3 in element.findAll("h3", class_="gs_rt"):
                 found = False
                 for a in h3.findAll("a"):
-                    if found == False:
+                    if not found:
                         title = a.text
                         link = a.get("href")
                         found = True
@@ -98,4 +98,3 @@ def SciHubUrls(html):
                 result.append(link)
 
     return result
-
