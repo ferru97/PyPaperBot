@@ -6,6 +6,7 @@ Created on Sun Jun  7 11:59:42 2020
 """
 from bs4 import BeautifulSoup
 
+
 def schoolarParser(html):
     result = []
     soup = BeautifulSoup(html, "html.parser")
@@ -25,10 +26,10 @@ def schoolarParser(html):
                         link = a.get("href")
                         found = True
             for a in element.findAll("a"):
-                 if "Cited by" in a.text:
-                     cites = int(a.text[8:])
-                 if "[PDF]" in a.text:
-                     link_pdf = a.get("href")
+                if "Cited by" in a.text:
+                    cites = int(a.text[8:])
+                if "[PDF]" in a.text:
+                    link_pdf = a.get("href")
             for div in element.findAll("div", class_="gs_a"):
                 try:
                     authors, source_and_year, source = div.text.replace('\u00A0', ' ').split(" - ")
@@ -50,23 +51,21 @@ def schoolarParser(html):
                     year = str(year)
             if title!=None:
                 result.append({
-                    'title' : title,
-                    'link' : link,
-                    'cites' : cites,
-                    'link_pdf' : link_pdf,
-                    'year' : year,
-                    'authors' : authors})
+                    'title': title,
+                    'link': link,
+                    'cites': cites,
+                    'link_pdf': link_pdf,
+                    'year': year,
+                    'authors': authors})
     return result
-
 
 
 def isBook(tag):
     result = False
     for span in tag.findAll("span", class_="gs_ct2"):
-        if span.text=="[B]":
+        if span.text == "[B]":
             result = True
     return result
-
 
 
 def getSchiHubPDF(html):
@@ -86,6 +85,7 @@ def getSchiHubPDF(html):
         result = "https:"+result
 
     return result
+
 
 def SciHubUrls(html):
     result = []

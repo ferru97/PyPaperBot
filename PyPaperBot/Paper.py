@@ -9,6 +9,7 @@ import re
 import csv
 import os
 
+
 class Paper:
 
 
@@ -28,32 +29,28 @@ class Paper:
         self.downloaded = False
         self.downloadedFrom = 0 #1-SciHub 2-scholar
 
-
-
     def getFileName(self):
         try:
-            return re.sub('[^\w\-_\. ]', '_', self.title)+".pdf"
+            return re.sub('[^\w\-_\. ]', '_', self.title) + ".pdf"
         except:
             return "none.pdf"
 
-    def setBibtex(self,bibtex):
-        x=bibtexparser.loads(bibtex, parser=None)
-        x=x.entries
+    def setBibtex(self, bibtex):
+        x = bibtexparser.loads(bibtex, parser=None)
+        x = x.entries
 
         self.bibtex = bibtex
 
         try:
             if "year" in x[0]:
-                self.year=x[0]["year"]
+                self.year = x[0]["year"]
             if 'author' in x[0]:
                 self.authors = x[0]["author"]
-            self.jurnal=x[0]["journal"].replace("\\","") if "journal" in x[0] else None
-            if self.jurnal==None:
-                 self.jurnal=x[0]["publisher"].replace("\\","") if "publisher" in x[0] else None
-
+            self.jurnal = x[0]["journal"].replace("\\", "") if "journal" in x[0] else None
+            if self.jurnal is None:
+                self.jurnal = x[0]["publisher"].replace("\\", "") if "publisher" in x[0] else None
         except:
             pass
-
 
     def canBeDownloaded(self):
         if self.DOI!=None or self.scholar_link!=None:
@@ -66,7 +63,7 @@ class Paper:
             content = ["Name", "Scholar Link", "DOI", "Bibtex",
                        "PDF Name", "Year", "Scholar page", "Journal",
                        "Downloaded", "Downloaded from", "Authors"]
-            file_writer = csv.DictWriter(w_file, delimiter = ",", lineterminator=os.linesep, fieldnames=content)
+            file_writer = csv.DictWriter(w_file, delimiter=",", lineterminator=os.linesep, fieldnames=content)
             file_writer.writeheader()
 
             for p in papers:
@@ -80,29 +77,27 @@ class Paper:
                     dwn_from = "Scholar"
 
                 file_writer.writerow({
-                        "Name" : p.title,
-                        "Scholar Link" : p.scholar_link,
-                        "DOI" : p.DOI,
-                        "Bibtex" : bibtex_found,
-                        "PDF Name" : pdf_name,
-                        "Year" : p.year,
-                        "Scholar page" : p.scholar_page,
-                        "Journal" : p.jurnal,
-                        "Downloaded" : p.downloaded,
-                        "Downloaded from" : dwn_from,
-                        "Authors" : p.authors})
-
+                    "Name": p.title,
+                    "Scholar Link": p.scholar_link,
+                    "DOI": p.DOI,
+                    "Bibtex": bibtex_found,
+                    "PDF Name": pdf_name,
+                    "Year": p.year,
+                    "Scholar page": p.scholar_page,
+                    "Journal": p.jurnal,
+                    "Downloaded": p.downloaded,
+                    "Downloaded from": dwn_from,
+                    "Authors": p.authors})
 
     def generateBibtex(papers, path):
         content = ""
         for p in papers:
-            if p.bibtex!=None:
-                content += p.bibtex+"\n"
+            if p.bibtex is not None:
+                content += p.bibtex + "\n"
 
-
-        relace_list = ["\ast","*","#"]
+        relace_list = ["\ast", "*", "#"]
         for c in relace_list:
-            content = content.replace(c,"")
+            content = content.replace(c, "")
 
         f = open(path, "w", encoding="latin-1", errors="ignore")
         f.write(str(content))

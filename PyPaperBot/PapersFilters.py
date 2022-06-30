@@ -7,8 +7,10 @@ Created on Tue Aug 18 12:41:29 2020
 import pandas as pd
 from difflib import SequenceMatcher
 
+
 def similarStrings(a, b):
     return SequenceMatcher(None, a, b).ratio()
+
 
 """
 Input
