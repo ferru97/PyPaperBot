@@ -6,11 +6,12 @@ Created on Sun Jun  7 11:59:42 2020
 """
 from bs4 import BeautifulSoup
 
+
 def schoolarParser(html):
     result = []
     soup = BeautifulSoup(html, "html.parser")
     for element in soup.findAll("div", class_="gs_r gs_or gs_scl"):
-        if isBook(element) == False:
+        if not isBook(element):
             title = None
             link = None
             link_pdf = None
@@ -20,15 +21,15 @@ def schoolarParser(html):
             for h3 in element.findAll("h3", class_="gs_rt"):
                 found = False
                 for a in h3.findAll("a"):
-                    if found == False:
+                    if not found:
                         title = a.text
                         link = a.get("href")
                         found = True
             for a in element.findAll("a"):
-                 if "Cited by" in a.text:
-                     cites = int(a.text[8:])
-                 if "[PDF]" in a.text:
-                     link_pdf = a.get("href")
+                if "Cited by" in a.text:
+                    cites = int(a.text[8:])
+                if "[PDF]" in a.text:
+                    link_pdf = a.get("href")
             for div in element.findAll("div", class_="gs_a"):
                 try:
                     authors, source_and_year, source = div.text.replace('\u00A0', ' ').split(" - ")
@@ -48,25 +49,23 @@ def schoolarParser(html):
                     year = None
                 else:
                     year = str(year)
-            if title!=None:
+            if title is not None:
                 result.append({
-                    'title' : title,
-                    'link' : link,
-                    'cites' : cites,
-                    'link_pdf' : link_pdf,
-                    'year' : year,
-                    'authors' : authors})
+                    'title': title,
+                    'link': link,
+                    'cites': cites,
+                    'link_pdf': link_pdf,
+                    'year': year,
+                    'authors': authors})
     return result
-
 
 
 def isBook(tag):
     result = False
     for span in tag.findAll("span", class_="gs_ct2"):
-        if span.text=="[B]":
+        if span.text == "[B]":
             result = True
     return result
-
 
 
 def getSchiHubPDF(html):
@@ -76,16 +75,17 @@ def getSchiHubPDF(html):
     iframe = soup.find(id='pdf')
     plugin = soup.find(id='plugin')
 
-    if iframe!=None:
+    if iframe is not None:
         result = iframe.get("src")
 
-    if plugin!=None and result==None:
+    if plugin is not None and result is None:
         result = plugin.get("src")
 
-    if result!=None and result[0]!="h":
-        result = "https:"+result
+    if result is not None and result[0] != "h":
+        result = "https:" + result
 
     return result
+
 
 def SciHubUrls(html):
     result = []
@@ -98,4 +98,3 @@ def SciHubUrls(html):
                 result.append(link)
 
     return result
-
