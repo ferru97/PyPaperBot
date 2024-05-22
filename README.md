@@ -115,7 +115,7 @@ Download papers given a file containing the DOIs:
 python -m PyPaperBot --doi-file="C:\User\example\papers\file.txt" --dwn-dir="C:\User\example\papers"`
 ```
 
-Search papers that cite another (find ID in scholar address bar when you search cites):
+Search papers that cite another (find ID in scholar address bar when you search citations):
 
 ```bash
 python -m PyPaperBot --cites=3120460092236365926`

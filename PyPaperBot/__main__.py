@@ -57,7 +57,7 @@ def main():
     parser.add_argument('--query', type=str, default=None,
                         help='Query to make on Google Scholar or Google Scholar page link')
     parser.add_argument('--cites', type=str, default=None,
-                        help='Paper ID (from scholar address bar when you search cites) if you want get only citations of that paper')
+                        help='Paper ID (from scholar address bar when you search citations) if you want get only citations of that paper')
     parser.add_argument('--doi', type=str, default=None,
                         help='DOI of the paper to download (this option uses only SciHub to download)')
     parser.add_argument('--doi-file', type=str, default=None,
