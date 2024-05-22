@@ -10,12 +10,12 @@ from .Scholar import ScholarPapersInfo
 from .Crossref import getPapersInfoFromDOIs
 from .proxy import proxy
 
-def start(query, scholar_results, scholar_pages, dwn_dir, proxy, min_date=None, num_limit=None, num_limit_type=None, filter_jurnal_file=None, restrict=None, DOIs=None, SciHub_URL=None):
+def start(query, scholar_results, scholar_pages, dwn_dir, proxy, min_date=None, num_limit=None, num_limit_type=None, filter_jurnal_file=None, restrict=None, DOIs=None, SciHub_URL=None, cites=None):
 
     to_download = []
     if DOIs is None:
         print("Query: {}".format(query))
-        to_download = ScholarPapersInfo(query, scholar_pages, restrict, min_date, scholar_results)
+        to_download = ScholarPapersInfo(query, scholar_pages, restrict, min_date, scholar_results, cites)
     else:
         print("Downloading papers from DOIs\n")
         num = 1
@@ -56,6 +56,8 @@ def main():
         description='PyPaperBot is python tool to search and dwonload scientific papers using Google Scholar, Crossref and SciHub')
     parser.add_argument('--query', type=str, default=None,
                         help='Query to make on Google Scholar or Google Scholar page link')
+    parser.add_argument('--cites', type=str, default=None,
+                        help='Set paper ID (from scholar address bar when you search cites) if you want get only citations of that paper')
     parser.add_argument('--doi', type=str, default=None,
                         help='DOI of the paper to download (this option uses only SciHub to download)')
     parser.add_argument('--doi-file', type=str, default=None,
@@ -95,7 +97,7 @@ def main():
         pchain = args.proxy
         proxy(pchain)
 
-    if args.query is None and args.doi_file is None and args.doi is None:
+    if args.query is None and args.doi_file is None and args.doi is None and args.cites is None:
         print("Error, provide at least one of the following arguments: --query or --file")
         sys.exit()
 
@@ -164,7 +166,7 @@ def main():
         max_dwn_type = 1
 
 
-    start(args.query, args.scholar_results, scholar_pages, dwn_dir, proxy, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, DOIs, args.scihub_mirror)
+    start(args.query, args.scholar_results, scholar_pages, dwn_dir, proxy, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, DOIs, args.scihub_mirror, args.cites)
 
 if __name__ == "__main__":
     main()
