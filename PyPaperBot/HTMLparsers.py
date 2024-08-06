@@ -1,11 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Jun  7 11:59:42 2020
-
-@author: Vito
-"""
 from bs4 import BeautifulSoup
-
 
 def schoolarParser(html):
     result = []
@@ -59,7 +52,6 @@ def schoolarParser(html):
                     'authors': authors})
     return result
 
-
 def isBook(tag):
     result = False
     for span in tag.findAll("span", class_="gs_ct2"):
@@ -67,10 +59,10 @@ def isBook(tag):
             result = True
     return result
 
-
 def getSchiHubPDF(html):
     result = None
     soup = BeautifulSoup(html, "html.parser")
+    # print("HTML Content for getSchiHubPDF:\n", soup.prettify())  # Debug print
 
     iframe = soup.find(id='pdf')
     plugin = soup.find(id='plugin')
@@ -86,15 +78,17 @@ def getSchiHubPDF(html):
 
     return result
 
-
 def SciHubUrls(html):
     result = []
     soup = BeautifulSoup(html, "html.parser")
+    # print("HTML Content for SciHubUrls:\n", soup.prettify())  # Debug print
 
     for ul in soup.findAll("ul"):
         for a in ul.findAll("a"):
             link = a.get("href")
             if link.startswith("https://sci-hub.") or link.startswith("http://sci-hub."):
                 result.append(link)
+
+    # print("Found paper:\n", result)  # Debug print
 
     return result

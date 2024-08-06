@@ -81,21 +81,43 @@ def downloadPapers(papers, dwnl_dir, num_limit, SciHub_URL=None):
                         url = p.pdf_link
                         dwn_source = 2
 
+                    headers = {
+                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+                    }
+
+                    proxies = {
+                        'http': 'socks5h://localhost:9050',
+                        'https': 'socks5h://localhost:9050'
+                    }
+
                     if url != "":
-                        r = requests.get(url, headers=NetInfo.HEADERS)
+                        r = requests.get(url, headers=headers, proxies=proxies)
                         content_type = r.headers.get('content-type')
+                        print("Initial request content type:", content_type)  # Debug print
 
                         if dwn_source == 1 and 'application/pdf' not in content_type:
                             time.sleep(random.randint(1, 5))
 
                             pdf_link = getSchiHubPDF(r.text)
+                            print("pdf link:", pdf_link)  # Debug print
                             if pdf_link is not None:
-                                r = requests.get(pdf_link, headers=NetInfo.HEADERS)
+                                r = requests.get(pdf_link, headers=headers, proxies=proxies, stream=True)
                                 content_type = r.headers.get('content-type')
+                                print("Content type for SciHub PDF:", content_type)  # Debug print
 
-                        if 'application/pdf' in content_type:
-                            paper_files.append(saveFile(pdf_dir, r.content, p, dwn_source))
+                        # Force save the file if we have the PDF URL, regardless of content type
+                        if 'application/pdf' in content_type or pdf_link is not None:
+                            print("Attempting to save PDF for:", p.title)  # Debug print
+                            saveFile(pdf_dir, r.content, p, dwn_source)
+                            num_downloaded += 1
+                            p.downloaded = True
+                            print("Download successful for:", p.title)  # Debug print
+                        else:
+                            print("Failed to retrieve PDF. Content type:", content_type)  # Debug print
                 except Exception:
+                    print("Failed to download paper:", p.title)  # Debug print
                     pass
 
                 faild += 1
+
+    return paper_files
