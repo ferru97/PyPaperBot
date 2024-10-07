@@ -1,5 +1,9 @@
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/ferru97)
 
+# NEWS: PyPaperBot development is back on track!
+##### Join the [Telegram](https://t.me/pypaperbotdatawizards) channel to stay updated, report bugs, or request custom data mining scripts.
+---
+
 # PyPaperBot
 
 PyPaperBot is a Python tool for **downloading scientific papers** using Google Scholar, Crossref, and SciHub.
