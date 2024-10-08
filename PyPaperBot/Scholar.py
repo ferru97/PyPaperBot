@@ -52,9 +52,13 @@ def scholar_requests(scholar_pages, url, restrict, scholar_results=10):
     return to_download
 
 
-def ScholarPapersInfo(query, scholar_pages, restrict, min_date=None, scholar_results=10):
-    url = r"https://scholar.google.com/scholar?hl=en&q=" + query + "&as_vis=1&as_sdt=1,5&start=%d"
-    if min_date is not None:
+def ScholarPapersInfo(query, scholar_pages, restrict, min_date=None, scholar_results=10, cites=None):
+    url = r"https://scholar.google.com/scholar?hl=en&as_vis=1&as_sdt=1,5&start=%d"
+    if query:
+        url += f"&q={query}"
+    if cites:
+        url += f"&cites={cites}"
+    if min_date:
         url += f"&as_ylo={min_date}"
 
     if len(query) > 7 and (query.startswith("http://") or query.startswith("https://")):
