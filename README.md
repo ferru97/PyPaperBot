@@ -48,23 +48,24 @@ pip install PyPaperbot
 
 PyPaperBot arguments:
 
-| Arguments          | Description                                                                              | Type   |
-| ------------------ | ---------------------------------------------------------------------------------------- | ------ |
-| \-\-query          | Query to make on Google Scholar or Google Scholar page link                              | string |
-| \-\-doi            | DOI of the paper to download (this option uses only SciHub to download)                  | string |
-| \-\-doi-file       | File .txt containing the list of paper's DOIs to download                                | string |
-| \-\-scholar-pages  | Number or range of Google Scholar pages to inspect. Each page has a maximum of 10 papers | string |
-| \-\-dwn-dir        | Directory path in which to save the result                                               | string |
-| \-\-min-year       | Minimal publication year of the paper to download                                        | int    |
-| \-\-max-dwn-year   | Maximum number of papers to download sorted by year                                      | int    |
-| \-\-max-dwn-cites  | Maximum number of papers to download sorted by number of citations                       | int    |
-| \-\-journal-filter | CSV file path of the journal filter (More info on github)                                | string |
-| \-\-restrict       | 0:Download only Bibtex - 1:Down load only papers PDF                                     | int    |
-| \-\-scihub-mirror  | Mirror for downloading papers from sci-hub. If not set, it is selected automatically     | string |
-| \-\-scholar-results| Number of scholar results to bedownloaded when \-\-scholar-pages=1                       | int    |
-| \-\-proxy          | Proxies to be used. Please specify the protocol to be used.                              | string |
-| \-\-single-proxy   | Use a single proxy. Recommended if using --proxy gives errors.                           | string |
-| \-h                | Shows the help                                                                           | --     |
+| Arguments                   | Description                                                                              | Type   |
+|-----------------------------| ---------------------------------------------------------------------------------------- |--------|
+| \-\-query                   | Query to make on Google Scholar or Google Scholar page link                              | string |
+| \-\-doi                     | DOI of the paper to download (this option uses only SciHub to download)                  | string |
+| \-\-doi-file                | File .txt containing the list of paper's DOIs to download                                | string |
+| \-\-scholar-pages           | Number or range of Google Scholar pages to inspect. Each page has a maximum of 10 papers | string |
+| \-\-dwn-dir                 | Directory path in which to save the result                                               | string |
+| \-\-min-year                | Minimal publication year of the paper to download                                        | int    |
+| \-\-max-dwn-year            | Maximum number of papers to download sorted by year                                      | int    |
+| \-\-max-dwn-cites           | Maximum number of papers to download sorted by number of citations                       | int    |
+| \-\-journal-filter          | CSV file path of the journal filter (More info on github)                                | string |
+| \-\-restrict                | 0:Download only Bibtex - 1:Down load only papers PDF                                     | int    |
+| \-\-scihub-mirror           | Mirror for downloading papers from sci-hub. If not set, it is selected automatically     | string |
+| \-\-scholar-results         | Number of scholar results to bedownloaded when \-\-scholar-pages=1                       | int    |
+| \-\-proxy                   | Proxies to be used. Please specify the protocol to be used.                              | string |
+| \-\-single-proxy            | Use a single proxy. Recommended if using --proxy gives errors.                           | string |
+| \-\-selenium-chrome-version | First three digits of the chrome version installed on your machine. If provided, selenium will be used for scholar search. It helps avoid bot detection but chrome must be installed.                           | int    |
+| \-h                         | Shows the help                                                                           | --     |
 
 ### Note
 
