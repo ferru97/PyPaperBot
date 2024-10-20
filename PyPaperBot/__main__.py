@@ -51,7 +51,9 @@ def start(query, scholar_results, scholar_pages, dwn_dir, proxy, min_date=None, 
 
 def main():
     print(
-        """PyPaperBot is a Python tool for downloading scientific papers using Google Scholar, Crossref and SciHub.\nIf you like this project, you can give me a cup of coffee at --> https://www.paypal.com/paypalme/ferru97 <-- :)\n""")
+        """PyPaperBot is a Python tool for downloading scientific papers using Google Scholar, Crossref and SciHub.
+        -Join the telegram channel to stay updated --> https://t.me/pypaperbotdatawizards <--
+        -If you like this project, you can share a cup of coffee at --> https://www.paypal.com/paypalme/ferru97 <-- :)\n""")
     time.sleep(4)
     parser = argparse.ArgumentParser(
         description='PyPaperBot is python tool to search and dwonload scientific papers using Google Scholar, Crossref and SciHub')
@@ -173,4 +175,6 @@ def main():
 if __name__ == "__main__":
     main()
     print(
-        """\nWork completed!\nIf you like this project, you can offer me a cup of coffee at --> https://www.paypal.com/paypalme/ferru97 <-- :)\n""")
+        """\nWork completed!
+        -Join the telegram channel to stay updated --> https://t.me/pypaperbotdatawizards <--
+        -If you like this project, you can share a cup of coffee at --> https://www.paypal.com/paypalme/ferru97 <-- :)\n""")
