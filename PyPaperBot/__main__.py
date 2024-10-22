@@ -3,6 +3,7 @@
 import argparse
 import sys
 import os
+import time
 from .Paper import Paper
 from .PapersFilters import filterJurnals, filter_min_date, similarStrings
 from .Downloader import downloadPapers
@@ -10,12 +11,14 @@ from .Scholar import ScholarPapersInfo
 from .Crossref import getPapersInfoFromDOIs
 from .proxy import proxy
 
-def start(query, scholar_results, scholar_pages, dwn_dir, proxy, min_date=None, num_limit=None, num_limit_type=None, filter_jurnal_file=None, restrict=None, DOIs=None, SciHub_URL=None):
+def start(query, scholar_results, scholar_pages, dwn_dir, proxy, min_date=None, num_limit=None, num_limit_type=None,
+          filter_jurnal_file=None, restrict=None, DOIs=None, SciHub_URL=None, chrome_version=None, cites=None):
 
     to_download = []
     if DOIs is None:
         print("Query: {}".format(query))
-        to_download = ScholarPapersInfo(query, scholar_pages, restrict, min_date, scholar_results)
+        print("Cites: {}".format(cites))
+        to_download = ScholarPapersInfo(query, scholar_pages, restrict, min_date, scholar_results, chrome_version, cites)
     else:
         print("Downloading papers from DOIs\n")
         num = 1
@@ -50,12 +53,16 @@ def start(query, scholar_results, scholar_pages, dwn_dir, proxy, min_date=None, 
 
 def main():
     print(
-        """PyPaperBot is a Python tool for downloading scientific papers using Google Scholar, Crossref and SciHub.\nIf you like this project, you can give me a cup of coffee at --> https://www.paypal.com/paypalme/ferru97 <-- :)\n""")
-
+        """PyPaperBot is a Python tool for downloading scientific papers using Google Scholar, Crossref and SciHub.
+        -Join the telegram channel to stay updated --> https://t.me/pypaperbotdatawizards <--
+        -If you like this project, you can share a cup of coffee at --> https://www.paypal.com/paypalme/ferru97 <-- :)\n""")
+    time.sleep(4)
     parser = argparse.ArgumentParser(
         description='PyPaperBot is python tool to search and dwonload scientific papers using Google Scholar, Crossref and SciHub')
     parser.add_argument('--query', type=str, default=None,
                         help='Query to make on Google Scholar or Google Scholar page link')
+    parser.add_argument('--cites', type=str, default=None,
+                        help='Paper ID (from scholar address bar when you search citations) if you want get only citations of that paper')
     parser.add_argument('--doi', type=str, default=None,
                         help='DOI of the paper to download (this option uses only SciHub to download)')
     parser.add_argument('--doi-file', type=str, default=None,
@@ -82,6 +89,8 @@ def main():
                         help='Use proxychains, provide a seperated list of proxies to use.Please specify the argument al the end')
     parser.add_argument('--single-proxy', type=str, default=None,
                         help='Use a single proxy. Recommended if using --proxy gives errors')
+    parser.add_argument('--selenium-chrome-version', type=int, default=None,
+                        help='First three digits of the chrome version installed on your machine. If provided, selenium will be used for scholar search. It helps avoid bot detection but chrome must be installed.')
     args = parser.parse_args()
 
     if args.single_proxy is not None:
@@ -95,8 +104,8 @@ def main():
         pchain = args.proxy
         proxy(pchain)
 
-    if args.query is None and args.doi_file is None and args.doi is None:
-        print("Error, provide at least one of the following arguments: --query or --file")
+    if args.query is None and args.doi_file is None and args.doi is None and args.cites is None:
+        print("Error, provide at least one of the following arguments: --query, --file, or --cites")
         sys.exit()
 
     if (args.query is not None and args.doi_file is not None) or (args.query is not None and args.doi is not None) or (
@@ -119,7 +128,7 @@ def main():
         print("Error: Only one option between '--max-dwn-year' and '--max-dwn-cites' can be used ")
         sys.exit()
 
-    if args.query is not None:
+    if args.query is not None or args.cites is not None:
         if args.scholar_pages:
             try:
                 split = args.scholar_pages.split('-')
@@ -164,9 +173,12 @@ def main():
         max_dwn_type = 1
 
 
-    start(args.query, args.scholar_results, scholar_pages, dwn_dir, proxy, args.min_year , max_dwn, max_dwn_type , args.journal_filter, args.restrict, DOIs, args.scihub_mirror)
+    start(args.query, args.scholar_results, scholar_pages, dwn_dir, proxy, args.min_year , max_dwn, max_dwn_type ,
+          args.journal_filter, args.restrict, DOIs, args.scihub_mirror, args.selenium_chrome_version, args.cites)
 
 if __name__ == "__main__":
     main()
     print(
-        """\nWork completed!\nIf you like this project, you can offer me a cup of coffee at --> https://www.paypal.com/paypalme/ferru97 <-- :)\n""")
+        """\nWork completed!
+        -Join the telegram channel to stay updated --> https://t.me/pypaperbotdatawizards <--
+        -If you like this project, you can share a cup of coffee at --> https://www.paypal.com/paypalme/ferru97 <-- :)\n""")
