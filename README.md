@@ -4,7 +4,7 @@
 
 PyPaperBot is a Python tool for **downloading scientific papers** using Google Scholar, Crossref, and SciHub.
 The tool tries to download papers from different sources such as PDF provided by Scholar, Scholar related links, and Scihub.
-PyPaerbot is also able to download the **bibtex** of each paper.
+PyPaperbot is also able to download the **bibtex** of each paper.
 
 ## Features
 
@@ -51,6 +51,7 @@ PyPaperBot arguments:
 | Arguments                   | Description                                                                              | Type   |
 |-----------------------------| ---------------------------------------------------------------------------------------- |--------|
 | \-\-query                   | Query to make on Google Scholar or Google Scholar page link                              | string |
+| \-\-cites                   | Paper ID (from scholar address bar when you search cites) if you want get only citations of that paper | string                              | string |
 | \-\-doi                     | DOI of the paper to download (this option uses only SciHub to download)                  | string |
 | \-\-doi-file                | File .txt containing the list of paper's DOIs to download                                | string |
 | \-\-scholar-pages           | Number or range of Google Scholar pages to inspect. Each page has a maximum of 10 papers | string |
@@ -119,6 +120,12 @@ If it doesn't work, try to use *py* instead of *python* i.e.
 
 ```bash
 py -m PyPaperBot --doi="10.0086/s41037-711-0132-1" --dwn-dir="C:\User\example\papers"`
+```
+
+Search papers that cite another (find ID in scholar address bar when you search citations):
+
+```bash
+python -m PyPaperBot --cites=3120460092236365926
 ```
 
 Using a proxy
