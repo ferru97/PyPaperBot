@@ -21,10 +21,10 @@ def setSciHubUrl():
         except:
             pass
     if found:
-        print("\nUsing {} as Sci-Hub instance".format(NetInfo.SciHub_URL))
+        print("\nUsing {} as Sci-Hub instance\nYou can use a specific mirror mirror with the --scihub-mirror argument\n".format(NetInfo.SciHub_URL))
     else:
         print(
-            "\nNo working Sci-Hub instance found!\nIf in your country Sci-Hub is not available consider using a VPN or a proxy")
+            "\nNo working Sci-Hub instance found!\nIf in your country Sci-Hub is not available consider using a VPN or a proxy\nYou can use a specific mirror mirror with the --scihub-mirror argument")
         NetInfo.SciHub_URL = "https://sci-hub.st"
 
 
