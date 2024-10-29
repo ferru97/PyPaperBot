@@ -126,6 +126,11 @@ def main():
     dwn_dir = args.dwn_dir.replace('\\', '/')
     if dwn_dir[-1] != '/':
         dwn_dir += "/"
+    if os.path.exists(dwn_dir) and os.path.isdir(dwn_dir) and os.listdir(dwn_dir):
+        print("Error: The directory path provided is not empty")
+        sys.exit()
+    else:
+        os.makedirs(dwn_dir, exist_ok=True)
 
     if args.max_dwn_year is not None and args.max_dwn_cites is not None:
         print("Error: Only one option between '--max-dwn-year' and '--max-dwn-cites' can be used ")
