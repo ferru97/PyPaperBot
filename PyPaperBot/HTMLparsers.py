@@ -5,6 +5,7 @@ Created on Sun Jun  7 11:59:42 2020
 @author: Vito
 """
 from bs4 import BeautifulSoup
+import re
 
 
 def schoolarParser(html):
@@ -72,8 +73,10 @@ def getSchiHubPDF(html):
     result = None
     soup = BeautifulSoup(html, "html.parser")
 
-    iframe = soup.find(id='pdf')
-    plugin = soup.find(id='plugin')
+    iframe = soup.find(id='pdf') #scihub logic
+    plugin = soup.find(id='plugin') #scihub logic
+    download_scidb = soup.find("a", text=lambda text: text and "Download" in text, href=re.compile(r"\.pdf$")) #scidb logic
+    embed_scihub = soup.find("embed") #scihub logic
 
     if iframe is not None:
         result = iframe.get("src")
@@ -83,6 +86,12 @@ def getSchiHubPDF(html):
 
     if result is not None and result[0] != "h":
         result = "https:" + result
+
+    if download_scidb is not None and result is None:
+        result = download_scidb.get("href")
+
+    if embed_scihub is not None and result is None:
+        result = embed_scihub.get("original-url")
 
     return result
 

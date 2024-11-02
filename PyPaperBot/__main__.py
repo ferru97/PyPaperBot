@@ -4,15 +4,33 @@ import argparse
 import sys
 import os
 import time
+import requests
 from .Paper import Paper
 from .PapersFilters import filterJurnals, filter_min_date, similarStrings
 from .Downloader import downloadPapers
 from .Scholar import ScholarPapersInfo
 from .Crossref import getPapersInfoFromDOIs
 from .proxy import proxy
+from .__init__ import __version__
+from urllib.parse import urljoin
+
+def checkVersion():
+    try :
+        print("PyPaperBot v" + __version__)
+        response = requests.get('https://pypi.org/pypi/pypaperbot/json')
+        latest_version = response.json()['info']['version']
+        if latest_version != __version__:
+            print("NEW VERSION AVAILABLE!\nUpdate with 'pip install PyPaperBot —upgrade' to get the latest features!\n")
+    except :
+        pass
+
 
 def start(query, scholar_results, scholar_pages, dwn_dir, proxy, min_date=None, num_limit=None, num_limit_type=None,
-          filter_jurnal_file=None, restrict=None, DOIs=None, SciHub_URL=None, chrome_version=None, cites=None):
+          filter_jurnal_file=None, restrict=None, DOIs=None, SciHub_URL=None, chrome_version=None, cites=None,
+          use_doi_as_filename=False, SciDB_URL=None):
+
+    if SciDB_URL is not None and "/scidb" not in SciDB_URL:
+        SciDB_URL = urljoin(SciDB_URL, "/scidb/")
 
     to_download = []
     if DOIs is None:
@@ -27,6 +45,7 @@ def start(query, scholar_results, scholar_pages, dwn_dir, proxy, min_date=None, 
             DOI = DOIs[i]
             print("Searching paper {} of {} with DOI {}".format(num, len(DOIs), DOI))
             papersInfo = getPapersInfoFromDOIs(DOI, restrict)
+            papersInfo.use_doi_as_filename = use_doi_as_filename
             to_download.append(papersInfo)
 
             num += 1
@@ -45,7 +64,7 @@ def start(query, scholar_results, scholar_pages, dwn_dir, proxy, min_date=None, 
         if num_limit_type is not None and num_limit_type == 1:
             to_download.sort(key=lambda x: int(x.cites_num) if x.cites_num is not None else 0, reverse=True)
 
-        downloadPapers(to_download, dwn_dir, num_limit, SciHub_URL)
+        downloadPapers(to_download, dwn_dir, num_limit, SciHub_URL, SciDB_URL)
 
     Paper.generateReport(to_download, dwn_dir + "result.csv")
     Paper.generateBibtex(to_download, dwn_dir + "bibtex.bib")
@@ -83,6 +102,8 @@ def main():
                         help='0:Download only Bibtex - 1:Down load only papers PDF')
     parser.add_argument('--scihub-mirror', default=None, type=str,
                         help='Mirror for downloading papers from sci-hub. If not set, it is selected automatically')
+    parser.add_argument('--annas-archive-mirror', default=None, type=str,
+                        help='Mirror for downloading papers from Annas Archive (SciDB). If not set, https://annas-archive.se is used')
     parser.add_argument('--scholar-results', default=10, type=int, choices=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                         help='Downloads the first x results for each scholar page(default/max=10)')
     parser.add_argument('--proxy', nargs='+', default=[],
@@ -91,6 +112,8 @@ def main():
                         help='Use a single proxy. Recommended if using --proxy gives errors')
     parser.add_argument('--selenium-chrome-version', type=int, default=None,
                         help='First three digits of the chrome version installed on your machine. If provided, selenium will be used for scholar search. It helps avoid bot detection but chrome must be installed.')
+    parser.add_argument('--use-doi-as-filename', action='store_true', default=False,
+                        help='Use DOIs as output file names')
     args = parser.parse_args()
 
     if args.single_proxy is not None:
@@ -123,6 +146,8 @@ def main():
     dwn_dir = args.dwn_dir.replace('\\', '/')
     if dwn_dir[-1] != '/':
         dwn_dir += "/"
+    if not os.path.exists(dwn_dir):
+        os.makedirs(dwn_dir, exist_ok=True)
 
     if args.max_dwn_year is not None and args.max_dwn_cites is not None:
         print("Error: Only one option between '--max-dwn-year' and '--max-dwn-cites' can be used ")
@@ -174,9 +199,11 @@ def main():
 
 
     start(args.query, args.scholar_results, scholar_pages, dwn_dir, proxy, args.min_year , max_dwn, max_dwn_type ,
-          args.journal_filter, args.restrict, DOIs, args.scihub_mirror, args.selenium_chrome_version, args.cites)
+          args.journal_filter, args.restrict, DOIs, args.scihub_mirror, args.selenium_chrome_version, args.cites,
+          args.use_doi_as_filename, args.annas_archive_mirror)
 
 if __name__ == "__main__":
+    checkVersion()
     main()
     print(
         """\nWork completed!
