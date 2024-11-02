@@ -72,7 +72,7 @@ def downloadPapers(papers, dwnl_dir, num_limit, SciHub_URL=None, SciDB_URL=None)
             url = ""
             while not p.downloaded and failed != 5:
                 try:
-                    dwn_source = 1  # 1 scihub - 2 scidb - 3 scholar
+                    dwn_source = 1  # 1 scidb - 2 scihub - 3 scholar
                     if failed == 0 and p.DOI is not None:
                         url = URLjoin(NetInfo.SciDB_URL, p.DOI)
                     if failed == 1 and p.DOI is not None:
