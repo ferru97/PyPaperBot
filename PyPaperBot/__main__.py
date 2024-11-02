@@ -12,7 +12,8 @@ from .Crossref import getPapersInfoFromDOIs
 from .proxy import proxy
 
 def start(query, scholar_results, scholar_pages, dwn_dir, proxy, min_date=None, num_limit=None, num_limit_type=None,
-          filter_jurnal_file=None, restrict=None, DOIs=None, SciHub_URL=None, chrome_version=None, cites=None):
+          filter_jurnal_file=None, restrict=None, DOIs=None, SciHub_URL=None, chrome_version=None, cites=None,
+          use_doi_as_filename=False):
 
     to_download = []
     if DOIs is None:
@@ -27,6 +28,7 @@ def start(query, scholar_results, scholar_pages, dwn_dir, proxy, min_date=None, 
             DOI = DOIs[i]
             print("Searching paper {} of {} with DOI {}".format(num, len(DOIs), DOI))
             papersInfo = getPapersInfoFromDOIs(DOI, restrict)
+            papersInfo.use_doi_as_filename = use_doi_as_filename
             to_download.append(papersInfo)
 
             num += 1
@@ -91,6 +93,7 @@ def main():
                         help='Use a single proxy. Recommended if using --proxy gives errors')
     parser.add_argument('--selenium-chrome-version', type=int, default=None,
                         help='First three digits of the chrome version installed on your machine. If provided, selenium will be used for scholar search. It helps avoid bot detection but chrome must be installed.')
+    parser.add_argument('--use-doi-as-filename', action='store_true', default=False)
     args = parser.parse_args()
 
     if args.single_proxy is not None:
@@ -123,6 +126,11 @@ def main():
     dwn_dir = args.dwn_dir.replace('\\', '/')
     if dwn_dir[-1] != '/':
         dwn_dir += "/"
+    if os.path.exists(dwn_dir) and os.path.isdir(dwn_dir) and os.listdir(dwn_dir):
+        print("Error: The directory path provided is not empty")
+        sys.exit()
+    else:
+        os.makedirs(dwn_dir, exist_ok=True)
 
     if args.max_dwn_year is not None and args.max_dwn_cites is not None:
         print("Error: Only one option between '--max-dwn-year' and '--max-dwn-cites' can be used ")
@@ -174,7 +182,8 @@ def main():
 
 
     start(args.query, args.scholar_results, scholar_pages, dwn_dir, proxy, args.min_year , max_dwn, max_dwn_type ,
-          args.journal_filter, args.restrict, DOIs, args.scihub_mirror, args.selenium_chrome_version, args.cites)
+          args.journal_filter, args.restrict, DOIs, args.scihub_mirror, args.selenium_chrome_version, args.cites,
+          args.use_doi_as_filename)
 
 if __name__ == "__main__":
     main()

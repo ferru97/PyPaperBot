@@ -70,6 +70,7 @@ PyPaperBot arguments:
 | \-\-proxy                   | Proxies to be used. Please specify the protocol to be used.                              | string |
 | \-\-single-proxy            | Use a single proxy. Recommended if using --proxy gives errors.                           | string |
 | \-\-selenium-chrome-version | First three digits of the chrome version installed on your machine. If provided, selenium will be used for scholar search. It helps avoid bot detection but chrome must be installed.                           | int    |
+| \-\-use-doi-as-filename | If provided, files are saved using the unique DOI as the filename rather than the default paper title            | bool    |
 | \-h                         | Shows the help                                                                           | --     |
 
 ### Note

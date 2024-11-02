@@ -8,6 +8,7 @@ import bibtexparser
 import re
 import csv
 import os
+import urllib.parse
 
 
 class Paper:
@@ -28,12 +29,17 @@ class Paper:
 
         self.downloaded = False
         self.downloadedFrom = 0  # 1-SciHub 2-scholar
+        
+        self.use_doi_as_filename = False # if True, the filename will be the DOI
 
     def getFileName(self):
-        try:
-            return re.sub(r'[^\w\-_. ]', '_', self.title) + ".pdf"
-        except:
-            return "none.pdf"
+        if self.use_doi_as_filename:
+            return urllib.parse.quote(self.DOI, safe='') + ".pdf"
+        else:
+            try:
+                return re.sub(r'[^\w\-_. ]', '_', self.title) + ".pdf"
+            except:
+                return "none.pdf"
 
     def setBibtex(self, bibtex):
         x = bibtexparser.loads(bibtex, parser=None)
