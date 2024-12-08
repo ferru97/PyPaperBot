@@ -26,7 +26,7 @@ setuptools.setup(
         'crossref-commons>=0.0.7',
         'future>=0.18.2',
         'HTMLParser>=0.0.2',
-        'idna>=2.10,<3',
+        'idna>=2.10,<4',
         'isort>=5.4.2',
         'lazy-object-proxy>=1.4.3',
         'mccabe>=0.6.1',

@@ -13,7 +13,7 @@ exceptiongroup==1.2.2
 future==1.0.0
 h11==0.14.0
 HTMLParser==0.0.2
-idna==2.10
+idna==3.7
 isort==5.13.2
 lazy-object-proxy==1.10.0
 mccabe==0.7.0
