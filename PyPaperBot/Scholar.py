@@ -64,13 +64,29 @@ def scholar_requests(scholar_pages, url, restrict, chrome_version, scholar_resul
     return to_download
 
 
-def ScholarPapersInfo(query, scholar_pages, restrict, min_date=None, scholar_results=10, chrome_version=None, cites=None):
+def parseSkipList(skip_words):
+    skip_list = skip_words.split(",")
+    print("Skipping results containing {}".format(skip_list))
+    output_param = ""
+    for skip_word in skip_list:
+        skip_word = skip_word.strip()
+        if " " in skip_word:
+            output_param += '+-"' + skip_word + '"'
+        else:
+            output_param += '+-' + skip_word
+    return output_param
+
+
+def ScholarPapersInfo(query, scholar_pages, restrict, min_date=None, scholar_results=10, chrome_version=None, cites=None, skip_words=None):
     url = r"https://scholar.google.com/scholar?hl=en&as_vis=1&as_sdt=1,5&start=%d"
     if query:
         if len(query) > 7 and (query.startswith("http://") or query.startswith("https://")):
             url = query
         else:
             url += f"&q={query}"
+        if skip_words:
+            url += parseSkipList(skip_words)
+            print(url)
     if cites:
         url += f"&cites={cites}"
     if min_date:
