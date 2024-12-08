@@ -53,4 +53,3 @@ websockets==13.1
 wrapt==1.16.0
 wsproto==1.2.0
 setuptools==75.2.0
-undetected-chromedriver==3.5.5
