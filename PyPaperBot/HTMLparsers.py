@@ -7,7 +7,7 @@ Created on Sun Jun  7 11:59:42 2020
 from bs4 import BeautifulSoup
 
 
-def schoolarParser(html):
+def scholarParser(html):
     result = []
     soup = BeautifulSoup(html, "html.parser")
     for element in soup.findAll(
